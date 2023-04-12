@@ -26,13 +26,24 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+
+# ĐỒ ÁN TỐT NGHIỆP KỸ SƯ KTMT 20222
+
+## XÂY DỰNG HỆ THỐNG CHECK-IN TẠI CHỖ - GIAI ĐOẠN 2 - SERVER SIDE
+
+- Hà Nội, 04/2023
+
+## Kết nối đến database:
+
+- Tạo file .env và copy các biến từ .env.example, sau đó điền các thông số để kết nối đến db
+
+## Cài đặt
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Chạy ứng dụng
 
 ```bash
 # development
@@ -61,19 +72,3 @@ $ npm run test:cov
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
-
-# ĐỒ ÁN TỐT NGHIỆP KỸ SƯ KTMT 20222
-
-## XÂY DỰNG HỆ THỐNG CHECK-IN TẠI CHỖ - GIAI ĐOẠN 2 - SERVER SIDE
-
-### 04/2023
