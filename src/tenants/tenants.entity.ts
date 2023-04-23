@@ -1,35 +1,48 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 import { Accounts } from '../accounts/accounts.entity';
+import { EventsManagerEntity } from 'src/events-manager/events-manager.entity';
 
-@Entity()
+@Entity({ name: 'Tenants' })
 export class Tenants {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn({ name: 'tenantId', type: 'bigint' })
   tenantId: number;
 
-  @Column({ unique: true })
+  @Column({ name: 'tenanCode', length: 255, unique: true })
   tenantCode: string;
 
-  @Column()
+  @Column({ name: 'tenantName', length: 255, nullable: false })
   tenantName: string;
 
-  @Column()
+  @Column({ name: 'tenantAddress', length: 255, nullable: false })
   tenantAddress: string;
 
-  @Column()
+  @Column({ name: 'website', length: 255 })
   website: string;
 
-  @Column()
+  @Column({ name: 'contactName', length: 255 })
   contactName: string;
 
-  @Column()
+  @Column({ name: 'contactPhone', length: 20 })
   contactPhone: string;
 
-  @Column()
+  @Column({ name: 'contactEmail', length: 255 })
   contactEmail: string;
 
-  @Column()
+  @Column({ name: 'enable', type: 'boolean', default: true })
   enable: boolean;
 
-  @ManyToMany(() => Accounts, (account) => account.tenants)
+  @ManyToMany(() => Accounts, (account) => account.tenantCode)
   accounts: Accounts[];
+
+  @OneToMany(
+    () => EventsManagerEntity,
+    (eventsManagerEntity) => eventsManagerEntity.tenantCode,
+  )
+  eventsManagerEntity: EventsManagerEntity[];
 }

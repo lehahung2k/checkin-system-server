@@ -39,12 +39,12 @@ export class Accounts {
   @Column({ name: 'companyName', length: 255 })
   companyName: string;
 
-  @Column({ name: 'enable', type: 'boolean' })
+  @Column({ name: 'enable', type: 'boolean', default: true })
   enable: boolean;
 
   @ManyToMany(() => Tenants, { cascade: true })
   @JoinTable({
-    name: 'Accounts2Tenants',
+    name: 'AccountsToTenants',
     joinColumn: { name: 'userId', referencedColumnName: 'userId' },
     inverseJoinColumn: { name: 'tenantId', referencedColumnName: 'tenantId' },
   })
