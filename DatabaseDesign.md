@@ -4,10 +4,11 @@
 
 ```mermaid
 erDiagram
-    Tenants ||--|{ EventsMgnt : use
-    EventsMgnt ||--|{ PointsOfCheckin : use
+    Tenants ||--|{ EventsMng : use
+    EventsMng ||--|{ PointsOfCheckin : use
     Accounts ||--|{ PointsOfCheckin : use
     PointsOfCheckin ||--|{ Transaction : use
+    PointsOfCheckin ||--|{ Devices : use
     Guests
     Accounts ||--o{ Accounts2Tenants : contain
     Tenants ||--o{ Accounts2Tenants : contain
@@ -43,7 +44,7 @@ erDiagram
         long tenantId FK
     }
 
-    EventsMgnt {
+    EventsMng {
         long eventId PK
         string eventCode PK
         string eventName
@@ -86,4 +87,11 @@ erDiagram
         blob checkinImg2
     }
 
+    Devices {
+        long deviceId PK
+        string deviceName
+        string pointCode FK
+        string description
+        bool enable
+    }
 ```
