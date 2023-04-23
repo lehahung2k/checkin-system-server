@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Tenants } from '../tenants/tenants.entity';
+import { PointsOfCheckin } from '../point-of-checkin/point-of-checkin.entity';
 
 @Entity({ name: 'Accounts' })
 export class Accounts {
@@ -49,4 +51,10 @@ export class Accounts {
     inverseJoinColumn: { name: 'tenantId', referencedColumnName: 'tenantId' },
   })
   tenants: Tenants[];
+
+  @OneToMany(
+    () => PointsOfCheckin,
+    (pointsOfCheckin) => pointsOfCheckin.username,
+  )
+  pointsOfCheckin: PointsOfCheckin[];
 }

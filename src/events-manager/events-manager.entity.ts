@@ -1,11 +1,5 @@
-import { PointOfCheckin } from 'src/point-of-checkin/point-of-checkin.entity';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { PointsOfCheckin } from 'src/point-of-checkin/point-of-checkin.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'EventsMng' })
 export class EventsManagerEntity {
@@ -36,6 +30,9 @@ export class EventsManagerEntity {
   @Column({ name: 'enable', type: 'bool', default: true })
   enable: boolean;
 
-  @OneToMany(() => PointOfCheckin, (pointOfCheckin) => pointOfCheckin.eventCode)
-  pointOfCheckin: PointOfCheckin[];
+  @OneToMany(
+    () => PointsOfCheckin,
+    (pointsOfCheckin) => pointsOfCheckin.eventCode,
+  )
+  pointOfCheckin: PointsOfCheckin[];
 }
