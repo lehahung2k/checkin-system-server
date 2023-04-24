@@ -1,7 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { EventsManagerEntity } from '../events-manager/events-manager.entity';
+import { Accounts } from '../accounts/accounts.entity';
+import { Transactions } from '../transactions/transactions.entity';
 
-@Entity({ name: 'PointOfCheckin' })
-export class PointOfCheckin {
+@Entity({ name: 'PointsOfCheckin' })
+export class PointsOfCheckin {
   @PrimaryGeneratedColumn({ name: 'pointId', type: 'bigint' })
   pointId: number;
 
@@ -15,11 +24,19 @@ export class PointOfCheckin {
   pointNote: string;
 
   @Column({ name: 'eventCode', length: 255, nullable: false })
+  @ManyToOne(
+    () => EventsManagerEntity,
+    (eventsManager) => eventsManager.eventCode,
+  )
   eventCode: string;
 
   @Column({ name: 'username', length: 255, nullable: false })
+  @ManyToOne(() => Accounts, (accounts) => accounts.username)
   username: string;
 
   @Column({ name: 'enable', type: 'bool', default: true })
   enable: boolean;
+
+  @OneToMany(() => Transactions, (transactions) => transactions.pointCode)
+  transactions: Transactions[];
 }
