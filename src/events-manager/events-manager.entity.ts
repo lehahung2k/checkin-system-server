@@ -32,7 +32,7 @@ export class EventsManagerEntity {
 
   @OneToMany(
     () => PointsOfCheckin,
-    (pointsOfCheckin) => pointsOfCheckin.eventCode,
+    (pointsOfCheckin) => pointsOfCheckin.eventsManager,
   )
   pointOfCheckin: PointsOfCheckin[];
 }

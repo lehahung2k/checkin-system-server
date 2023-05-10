@@ -81,7 +81,7 @@ erDiagram
         string pointCode FK
         string guestCode
         string note
-        datetime createTime
+        datetime createdAt
         bool enable
         blob checkinImg1
         blob checkinImg2

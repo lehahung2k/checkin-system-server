@@ -23,11 +23,13 @@ export class PointsOfCheckin {
   @Column({ name: 'pointNote', length: 255, nullable: true })
   pointNote: string;
 
-  @Column({ name: 'eventCode', length: 255, nullable: false })
   @ManyToOne(
     () => EventsManagerEntity,
-    (eventsManager) => eventsManager.eventCode,
+    (eventsManager) => eventsManager.pointOfCheckin,
   )
+  eventsManager: EventsManagerEntity;
+
+  @Column({ name: 'eventCode', length: 255, nullable: false })
   eventCode: string;
 
   @Column({ name: 'username', length: 255, nullable: false })
@@ -37,6 +39,6 @@ export class PointsOfCheckin {
   @Column({ name: 'enable', type: 'bool', default: true })
   enable: boolean;
 
-  @OneToMany(() => Transactions, (transactions) => transactions.pointCode)
+  @OneToMany(() => Transactions, (transactions) => transactions.pointsOfCheckin)
   transactions: Transactions[];
 }
