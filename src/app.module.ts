@@ -10,6 +10,7 @@ import { GuestsModule } from './guests/guests.module';
 import { AuthModule } from './auth/auth.module';
 import { databaseConfig } from './config/database.config';
 import { TransactionsModule } from './transactions/transactions.module';
+import { DevicesModule } from './devices/devices.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
@@ -20,6 +21,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     GuestsModule,
     AuthModule,
     TransactionsModule,
+    DevicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
