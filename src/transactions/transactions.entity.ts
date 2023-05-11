@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 import { PointsOfCheckin } from '../point-of-checkin/point-of-checkin.entity';
 
 @Entity({ name: 'Transactions' })
@@ -10,10 +10,8 @@ export class Transactions {
     () => PointsOfCheckin,
     (pointsOfCheckin) => pointsOfCheckin.transactions,
   )
-  pointsOfCheckin: PointsOfCheckin;
-
-  @Column({ name: 'pointCode', length: 255 })
-  pointCode: string;
+  @JoinColumn({ name: 'pointCode', referencedColumnName: 'pointCode' })
+  pointCode: PointsOfCheckin;
 
   @Column({ name: 'guestCode', length: 255 })
   guestCode: string;
@@ -24,8 +22,8 @@ export class Transactions {
   @Column({ name: 'createdAt', type: 'datetime' })
   createdAt: Date;
 
-  @Column({ name: 'enable', type: 'bool', default: true })
-  enable: boolean;
+  @Column({ name: 'enabled', type: 'tinyint', default: true })
+  enabled: boolean;
 
   @Column({ name: 'checkinImg1', type: 'longblob' })
   checkinImg1: Buffer;

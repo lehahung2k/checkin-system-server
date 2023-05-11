@@ -6,7 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Accounts } from '../accounts/accounts.entity';
-import { EventsManagerEntity } from 'src/events-manager/events-manager.entity';
+import { EventsManager } from 'src/events-manager/events-manager.entity';
 
 @Entity({ name: 'Tenants' })
 export class Tenants {
@@ -34,15 +34,12 @@ export class Tenants {
   @Column({ name: 'contactEmail', length: 255 })
   contactEmail: string;
 
-  @Column({ name: 'enable', type: 'boolean', default: true })
-  enable: boolean;
+  @Column({ name: 'enabled', type: 'tinyint', default: true })
+  enabled: boolean;
 
   @ManyToMany(() => Accounts, (account) => account.tenantCode)
   accounts: Accounts[];
 
-  @OneToMany(
-    () => EventsManagerEntity,
-    (eventsManagerEntity) => eventsManagerEntity.tenantCode,
-  )
-  eventsManagerEntity: EventsManagerEntity[];
+  @OneToMany(() => EventsManager, (eventsManager) => eventsManager.tenantCode)
+  eventsManagerEntity: EventsManager[];
 }

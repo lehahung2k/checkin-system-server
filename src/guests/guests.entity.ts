@@ -8,18 +8,18 @@ export class Guests {
   @Column({ name: 'guestCode', length: 255, unique: true })
   guestCode: string;
 
-  @Column({ name: 'guestDescription', type: 'text', nullable: true })
+  @Column({ name: 'guestDescription', type: 'text' })
   guestDescription: string;
 
-  @Column({ name: 'frontImg', type: 'blob', nullable: true })
-  frontImg: Buffer;
+  @Column({ name: 'frontImg', type: 'longblob' })
+  frontImg: Blob;
 
-  @Column({ name: 'backImg', type: 'blob', nullable: true })
-  backImg: Buffer;
+  @Column({ name: 'backImg', type: 'longblob' })
+  backImg: Blob;
 
   @Column({ name: 'identityType', nullable: false })
   identityType: string;
 
-  @Column({ name: 'enable', type: 'boolean', default: true })
-  enable: boolean;
+  @Column({ name: 'enabled', type: 'tinyint', default: true })
+  enabled: boolean;
 }

@@ -1,19 +1,28 @@
 import { PointsOfCheckin } from 'src/point-of-checkin/point-of-checkin.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Tenants } from '../tenants/tenants.entity';
 
 @Entity({ name: 'EventsMng' })
-export class EventsManagerEntity {
+export class EventsManager {
   @PrimaryGeneratedColumn({ name: 'eventId', type: 'bigint' })
   eventId: number;
 
-  @Column({ name: 'eventCode' })
+  @Column({ name: 'eventCode', unique: true })
   eventCode: string;
 
   @Column({ name: 'eventName' })
   eventName: string;
 
-  @Column({ name: 'tenantCode' })
-  tenantCode: string;
+  @ManyToOne(() => Tenants, (tenants) => tenants.eventsManagerEntity)
+  @JoinColumn({ name: 'tenantCode', referencedColumnName: 'tenantCode' })
+  tenantCode: Tenants;
 
   @Column({ name: 'eventDescription', type: 'text' })
   eventDescription: string;
@@ -27,12 +36,12 @@ export class EventsManagerEntity {
   @Column({ name: 'eventImg', type: 'longblob' })
   eventImg: Buffer;
 
-  @Column({ name: 'enable', type: 'bool', default: true })
-  enable: boolean;
+  @Column({ name: 'enabled', type: 'tinyint', default: true })
+  enabled: boolean;
 
   @OneToMany(
     () => PointsOfCheckin,
-    (pointsOfCheckin) => pointsOfCheckin.eventsManager,
+    (pointsOfCheckin) => pointsOfCheckin.eventCode,
   )
-  pointOfCheckin: PointsOfCheckin[];
+  pointOfCheckin: Promise<PointsOfCheckin[]>;
 }
