@@ -26,8 +26,8 @@ export class Transactions {
   enabled: boolean;
 
   @Column({ name: 'checkinImg1', type: 'longblob' })
-  checkinImg1: Buffer;
+  checkinImg1: Blob;
 
   @Column({ name: 'checkinImg2', type: 'longblob' })
-  checkinImg2: Buffer;
+  checkinImg2: Blob;
 }

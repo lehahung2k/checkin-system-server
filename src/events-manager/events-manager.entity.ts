@@ -34,7 +34,7 @@ export class EventsManager {
   endTime: Date;
 
   @Column({ name: 'eventImg', type: 'longblob' })
-  eventImg: Buffer;
+  eventImg: Blob;
 
   @Column({ name: 'enabled', type: 'tinyint', default: true })
   enabled: boolean;
