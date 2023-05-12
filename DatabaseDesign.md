@@ -10,8 +10,8 @@ erDiagram
     PointsOfCheckin ||--|{ Transaction : use
     PointsOfCheckin ||--|{ Devices : use
     Guests
-    Accounts ||--o{ Accounts2Tenants : contain
-    Tenants ||--o{ Accounts2Tenants : contain
+    Accounts ||--o{ AccountsToTenants : contain
+    Tenants ||--o{ AccountsToTenants : contain
 
     Accounts {
         long userId PK
@@ -39,7 +39,7 @@ erDiagram
         bool enable
     }
 
-    Accounts2Tenants {
+    AccountsToTenants {
         long userId FK
         long tenantId FK
     }
@@ -81,7 +81,7 @@ erDiagram
         string pointCode FK
         string guestCode
         string note
-        datetime createTime
+        datetime createdAt
         bool enable
         blob checkinImg1
         blob checkinImg2

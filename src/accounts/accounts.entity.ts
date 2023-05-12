@@ -41,8 +41,8 @@ export class Accounts {
   @Column({ name: 'companyName', length: 255 })
   companyName: string;
 
-  @Column({ name: 'enable', type: 'boolean', default: true })
-  enable: boolean;
+  @Column({ name: 'enabled', type: 'tinyint', default: true })
+  enabled: boolean;
 
   @ManyToMany(() => Tenants, { cascade: true })
   @JoinTable({
@@ -52,9 +52,6 @@ export class Accounts {
   })
   tenants: Tenants[];
 
-  @OneToMany(
-    () => PointsOfCheckin,
-    (pointsOfCheckin) => pointsOfCheckin.username,
-  )
-  pointsOfCheckin: PointsOfCheckin[];
+  @OneToMany(() => PointsOfCheckin, (pointsOfCheckin) => pointsOfCheckin.username)
+  pointsOfCheckin: Promise<PointsOfCheckin[]>;
 }

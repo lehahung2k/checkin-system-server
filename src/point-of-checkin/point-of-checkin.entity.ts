@@ -4,10 +4,12 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  JoinColumn,
 } from 'typeorm';
-import { EventsManagerEntity } from '../events-manager/events-manager.entity';
+import { EventsManager } from '../events-manager/events-manager.entity';
 import { Accounts } from '../accounts/accounts.entity';
 import { Transactions } from '../transactions/transactions.entity';
+import { Devices } from '../devices/devices.entity';
 
 @Entity({ name: 'PointsOfCheckin' })
 export class PointsOfCheckin {
@@ -23,20 +25,23 @@ export class PointsOfCheckin {
   @Column({ name: 'pointNote', length: 255, nullable: true })
   pointNote: string;
 
-  @Column({ name: 'eventCode', length: 255, nullable: false })
   @ManyToOne(
-    () => EventsManagerEntity,
-    (eventsManager) => eventsManager.eventCode,
+    () => EventsManager,
+    (eventsManager) => eventsManager.pointOfCheckin,
   )
-  eventCode: string;
+  @JoinColumn({ name: 'eventCode', referencedColumnName: 'eventCode' })
+  eventCode: EventsManager;
 
-  @Column({ name: 'username', length: 255, nullable: false })
-  @ManyToOne(() => Accounts, (accounts) => accounts.username)
-  username: string;
+  @ManyToOne(() => Accounts, (accounts) => accounts.pointsOfCheckin)
+  @JoinColumn({ name: 'username', referencedColumnName: 'username' })
+  username: Accounts;
 
-  @Column({ name: 'enable', type: 'bool', default: true })
-  enable: boolean;
+  @Column({ name: 'enabled', type: 'tinyint', default: true })
+  enabled: boolean;
 
   @OneToMany(() => Transactions, (transactions) => transactions.pointCode)
-  transactions: Transactions[];
+  transactions: Promise<Transactions[]>;
+
+  @OneToMany(() => Devices, (devices) => devices.pointCode)
+  devices: Promise<Devices[]>;
 }

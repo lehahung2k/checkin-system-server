@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS Guests
     guestDescription varchar(255),
     frontImg         longblob,
     backImg          longblob,
-    identityType     varchar(255),
+    identityType     varchar(255) NOT NULL,
     enabled          tinyint(1),
 
     primary key (guestId)
@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS Accounts
     enabled     tinyint(1),
 
     primary key (userId),
-    index (tenantCode)
 );
 
 CREATE TABLE IF NOT EXISTS AccountsToTernants
@@ -68,7 +67,6 @@ CREATE TABLE IF NOT EXISTS EventsMng
 
     PRIMARY KEY (eventId),
     FOREIGN KEY (tenantCode) REFERENCES Tenants (tenantCode),
-    INDEX (eventCode)
 );
 
 CREATE TABLE IF NOT EXISTS PointsOfCheckin
@@ -84,7 +82,6 @@ CREATE TABLE IF NOT EXISTS PointsOfCheckin
     primary key (pointId),
     foreign key (eventCode) references EventsMng (eventCode),
     foreign key (username) references Accounts (username),
-    INDEX (pointCode, eventCode, username)
 );
 
 CREATE TABLE IF NOT EXISTS Transactions
