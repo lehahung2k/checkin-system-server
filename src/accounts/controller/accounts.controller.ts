@@ -1,4 +1,14 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
+import { AccountsService } from '../accounts.service';
+import { ApiTags } from "@nestjs/swagger";
 
-@Controller('accounts')
-export class AccountsController {}
+@Controller('/api/accounts')
+@ApiTags('accounts')
+export class AccountsController {
+  constructor(private readonly accountService: AccountsService) {}
+
+  @Get()
+  async getAll() {
+    return this.accountService.getAll();
+  }
+}
