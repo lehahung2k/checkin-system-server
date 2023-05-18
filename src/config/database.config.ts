@@ -26,5 +26,5 @@ export const databaseConfig: TypeOrmModuleOptions = {
     Tenants,
     Devices,
   ],
-  synchronize: true,
+  synchronize: false,
 };
