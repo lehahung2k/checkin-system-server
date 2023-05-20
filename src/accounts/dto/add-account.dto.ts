@@ -36,16 +36,16 @@ export class AddAccountDto {
   @IsEmail({}, { message: 'Invalid email address' })
   email: string;
 
-  @IsNotEmpty()
   @ApiPropertyOptional()
   @IsString()
-  role: string;
+  companyName: string;
 
   @ApiPropertyOptional()
   @IsString()
   tenantCode: string;
 
+  @IsNotEmpty()
   @ApiPropertyOptional()
   @IsString()
-  companyName: string;
+  role: string;
 }
