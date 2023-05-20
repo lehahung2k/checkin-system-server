@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
 import { PointsOfCheckin } from '../point-of-checkin/point-of-checkin.entity';
 
 @Entity({ name: 'Transactions' })
@@ -26,8 +32,8 @@ export class Transactions {
   enabled: boolean;
 
   @Column({ name: 'checkinImg1', type: 'longblob' })
-  checkinImg1: Blob;
+  checkinImg1: Buffer;
 
   @Column({ name: 'checkinImg2', type: 'longblob' })
-  checkinImg2: Blob;
+  checkinImg2: Buffer;
 }
