@@ -52,6 +52,9 @@ export class Accounts {
   })
   tenants: Tenants[];
 
-  @OneToMany(() => PointsOfCheckin, (pointsOfCheckin) => pointsOfCheckin.username)
+  @OneToMany(
+    () => PointsOfCheckin,
+    (pointsOfCheckin) => pointsOfCheckin.username,
+  )
   pointsOfCheckin: Promise<PointsOfCheckin[]>;
 }

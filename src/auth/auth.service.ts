@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -11,15 +12,19 @@ import { comparePassword, hashPassword } from '../utils/algorithm.utils';
 import { LoginDto } from '../accounts/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import {
+  CREATE_ACCOUNT_FAILED,
   INCORRECT_PASSWORD,
+  UN_RECOGNIZED_TENANT,
   USER_NOT_FOUND_MESSAGE,
 } from '../utils/message.utils';
+import { TenantsRepository } from '../tenants/tenants.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Accounts)
     private readonly accountRepo: AccountsRepository,
+    private readonly tenantRepo: TenantsRepository,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -52,10 +57,22 @@ export class AuthService {
     } = {
       ...addNewAccount,
       password: encryptPass,
-      active: 0,
+      active: 1,
       enabled: true,
     };
-    return await this.accountRepo.save(newAccount);
+    switch (addNewAccount.role) {
+      case 'admin':
+        return await this.accountRepo.save(newAccount);
+      case 'tenant':
+        return await this.accountRepo.save(newAccount);
+      case 'poc': {
+        if (await this.checkTenantCode(addNewAccount.tenantCode)) {
+          return await this.accountRepo.save(newAccount);
+        } else throw new NotFoundException(UN_RECOGNIZED_TENANT);
+      }
+      default:
+        throw new BadRequestException(CREATE_ACCOUNT_FAILED);
+    }
   }
   async isEmailTaken(email: string): Promise<boolean> {
     const existingAccount = await this.accountRepo.findOne({
@@ -83,5 +100,12 @@ export class AuthService {
 
   async verifyToken(token: string): Promise<any> {
     return this.jwtService.verifyAsync(token);
+  }
+
+  async checkTenantCode(tenantCode: string): Promise<boolean> {
+    const findTenantCode = await this.tenantRepo.findOne({
+      where: { tenantCode },
+    });
+    return !!findTenantCode;
   }
 }

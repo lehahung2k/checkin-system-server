@@ -4,3 +4,4 @@ export const UNAUTHORIED_MESSAGE = 'Tên đăng nhập hoặc mật khẩu khôn
 export const DUPLICATE_EMAIL_OR_USERNAME = 'Tên đăng nhập hoặc email đã được sử dụng';
 export const CREATE_ACCOUNT_SUCCESS = 'Create account success';
 export const CREATE_ACCOUNT_FAILED = 'Create account failed';
+export const UN_RECOGNIZED_TENANT = 'Không tìm thấy mã doanh nghiệp';

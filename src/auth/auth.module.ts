@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Accounts } from '../accounts/accounts.entity';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
+import { TenantsRepository } from '../tenants/tenants.repository';
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ dotenv.config();
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AccountsRepository],
-  exports: [AuthService, AccountsRepository],
+  providers: [AuthService, AccountsRepository, TenantsRepository],
+  exports: [AuthService, AccountsRepository, TenantsRepository],
 })
 export class AuthModule {}

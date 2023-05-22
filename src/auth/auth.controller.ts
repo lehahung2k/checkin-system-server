@@ -8,6 +8,7 @@ import {
   CREATE_ACCOUNT_SUCCESS,
   DUPLICATE_EMAIL_OR_USERNAME,
   INCORRECT_PASSWORD,
+  UN_RECOGNIZED_TENANT,
   UNAUTHORIED_MESSAGE,
   USER_NOT_FOUND_MESSAGE,
 } from '../utils/message.utils';
@@ -52,15 +53,16 @@ export class AuthController {
         newAccount.username,
       );
       if (emailErr || usernameErr) {
-        res.status(400).send(DUPLICATE_EMAIL_OR_USERNAME);
+        res.status(400).json({ message: DUPLICATE_EMAIL_OR_USERNAME });
       } else {
         await this.authService.createAccount(newAccount);
         res.send(CREATE_ACCOUNT_SUCCESS);
       }
     } catch (error) {
-      if (error.code === '23505') {
-        res.status(500).send(CREATE_ACCOUNT_FAILED);
-      }
+      const statusCode = HttpStatus.BAD_REQUEST;
+      let resMsg = CREATE_ACCOUNT_FAILED;
+      if (error.message == UN_RECOGNIZED_TENANT) resMsg = UN_RECOGNIZED_TENANT;
+      res.status(statusCode).json({ message: resMsg });
     }
   }
 }
