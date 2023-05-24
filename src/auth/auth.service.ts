@@ -98,10 +98,6 @@ export class AuthService {
     return this.jwtService.signAsync(payload);
   }
 
-  async verifyToken(token: string): Promise<any> {
-    return this.jwtService.verifyAsync(token);
-  }
-
   async checkTenantCode(tenantCode: string): Promise<boolean> {
     const findTenantCode = await this.tenantRepo.findOne({
       where: { tenantCode },

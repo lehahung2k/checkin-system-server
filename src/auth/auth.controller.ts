@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { LoginDto } from '../accounts/dto/login.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AddAccountDto } from '../accounts/dto/add-account.dto';
@@ -41,7 +33,7 @@ export class AuthController {
           role: user.role,
         },
       };
-
+      res.header('Authorization', `Bearer ${token}`);
       res.status(HttpStatus.OK).json(response);
     } catch (err) {
       let statusCode = HttpStatus.UNAUTHORIZED;
