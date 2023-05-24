@@ -7,6 +7,7 @@ import { Accounts } from '../accounts/accounts.entity';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { TenantsRepository } from '../tenants/tenants.repository';
+import { RoleGuard } from './role.guard';
 
 dotenv.config();
 
@@ -14,12 +15,13 @@ dotenv.config();
   imports: [
     TypeOrmModule.forFeature([Accounts]),
     JwtModule.register({
+      global: true,
       secret: process.env.SECRET_KEY,
       signOptions: { expiresIn: '1h' },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AccountsRepository, TenantsRepository],
-  exports: [AuthService, AccountsRepository, TenantsRepository],
+  providers: [AuthService, AccountsRepository, TenantsRepository, RoleGuard],
+  exports: [AuthService, AccountsRepository, TenantsRepository, RoleGuard],
 })
 export class AuthModule {}
