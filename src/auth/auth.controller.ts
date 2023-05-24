@@ -1,4 +1,12 @@
-import { Body, Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { LoginDto } from '../accounts/dto/login.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AddAccountDto } from '../accounts/dto/add-account.dto';
@@ -8,8 +16,9 @@ import {
   CREATE_ACCOUNT_SUCCESS,
   DUPLICATE_EMAIL_OR_USERNAME,
   INCORRECT_PASSWORD,
+  LOGIN_SUCCESS,
   UN_RECOGNIZED_TENANT,
-  UNAUTHORIED_MESSAGE,
+  UN_AUTHORED_MESSAGE,
   USER_NOT_FOUND_MESSAGE,
 } from '../utils/message.utils';
 
@@ -24,9 +33,13 @@ export class AuthController {
       const token = await this.authService.generateToken(user);
 
       const response = {
-        token,
-        fullName: user.fullName,
-        role: user.role,
+        message: LOGIN_SUCCESS,
+        accessToken: token,
+        user: {
+          id: user.userId,
+          fullName: user.fullName,
+          role: user.role,
+        },
       };
 
       res.status(HttpStatus.OK).json(response);
@@ -41,7 +54,7 @@ export class AuthController {
         statusCode = HttpStatus.UNAUTHORIZED;
       }
 
-      res.status(statusCode).json({ message: UNAUTHORIED_MESSAGE });
+      res.status(statusCode).json({ message: UN_AUTHORED_MESSAGE });
     }
   }
   @Post('/register')

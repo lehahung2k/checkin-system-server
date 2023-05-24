@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as dotenv from 'dotenv';
+import { ValidationPipe } from "@nestjs/common";
 
 async function bootstrap() {
   dotenv.config();
@@ -24,6 +25,8 @@ async function bootstrap() {
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
   };
   app.enableCors(corsConfig);
+
+  // app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT || 8080);
 }
