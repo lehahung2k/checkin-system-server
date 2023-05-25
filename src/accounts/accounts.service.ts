@@ -20,7 +20,16 @@ export class AccountsService {
       .createQueryBuilder('account')
       .where('account.role = :role', { role: 'poc' })
       .getMany();
+    console.log(listPoc);
     return this.mappingResponse(listPoc);
+  }
+
+  async getAllAccountTenant(): Promise<AccountResDto[]> {
+    const listTenant = await this.usersRepository
+      .createQueryBuilder('account')
+      .where('account.role = :role', { role: 'tenant' })
+      .getMany();
+    return this.mappingResponse(listTenant);
   }
 
   mappingResponse(accountRes: Accounts[]): AccountResDto[] {

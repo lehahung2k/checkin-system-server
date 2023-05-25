@@ -42,4 +42,20 @@ export class AccountsController {
         .json({ message: ERROR_RESPONSE, payload: null });
     }
   }
+
+  @Get('/tenant')
+  @Role('admin')
+  @ApiBearerAuth()
+  async getAccountTenant(@Res() res: any): Promise<void> {
+    try {
+      const tenantAccount = await this.accountService.getAllAccountTenant();
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: tenantAccount });
+    } catch (err) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: ERROR_RESPONSE, payload: null });
+    }
+  }
 }
