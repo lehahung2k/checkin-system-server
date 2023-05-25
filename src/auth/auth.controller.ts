@@ -25,7 +25,6 @@ export class AuthController {
       const token = await this.authService.generateToken(user);
 
       const response = {
-        message: LOGIN_SUCCESS,
         accessToken: token,
         user: {
           id: user.userId,
@@ -34,7 +33,9 @@ export class AuthController {
         },
       };
       res.header('Authorization', `Bearer ${token}`);
-      res.status(HttpStatus.OK).json(response);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: LOGIN_SUCCESS, payload: response });
     } catch (err) {
       let statusCode = HttpStatus.UNAUTHORIZED;
 
@@ -58,16 +59,17 @@ export class AuthController {
         newAccount.username,
       );
       if (emailErr || usernameErr) {
-        res.status(400).json({ message: DUPLICATE_EMAIL_OR_USERNAME });
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: DUPLICATE_EMAIL_OR_USERNAME });
       } else {
         await this.authService.createAccount(newAccount);
-        res.send(CREATE_ACCOUNT_SUCCESS);
+        res.status(HttpStatus.OK).json({ message: CREATE_ACCOUNT_SUCCESS });
       }
     } catch (error) {
-      const statusCode = HttpStatus.BAD_REQUEST;
       let resMsg = CREATE_ACCOUNT_FAILED;
       if (error.message == UN_RECOGNIZED_TENANT) resMsg = UN_RECOGNIZED_TENANT;
-      res.status(statusCode).json({ message: resMsg });
+      res.status(HttpStatus.BAD_REQUEST).json({ message: resMsg });
     }
   }
 }
