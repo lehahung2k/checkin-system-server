@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -41,11 +42,16 @@ export class TenantsController {
   }
 
   @Post('/create')
-  @Role('admin', 'tenant')
+  @Role('tenant')
   @ApiBearerAuth()
-  async createNewTenant(@Body() newTenant: AddTenantDto, @Res() res) {
+  async createNewTenant(
+    @Body() newTenant: AddTenantDto,
+    @Res() res,
+    @Req() request,
+  ) {
     try {
-      const response = await this.tenantsService.addTenant(newTenant);
+      const userId = parseInt(request.userId);
+      const response = await this.tenantsService.addTenant(newTenant, userId);
       res
         .status(HttpStatus.OK)
         .json({ message: SUCCESS_RESPONSE, payload: response });

@@ -28,7 +28,7 @@ export class AccountsController {
   }
 
   @Get('/poc')
-  @Role('admin', 'tenant')
+  @Role('admin')
   @ApiBearerAuth()
   async getAllPoc(@Res() res: any): Promise<void> {
     try {
