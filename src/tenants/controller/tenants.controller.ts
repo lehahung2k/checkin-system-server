@@ -56,6 +56,7 @@ export class TenantsController {
         .status(HttpStatus.OK)
         .json({ message: SUCCESS_RESPONSE, payload: response });
     } catch (err) {
+      console.log(err);
       res.status(HttpStatus.BAD_REQUEST).json({ message: BAD_REQUEST_RES });
     }
   }

@@ -20,13 +20,20 @@ export class TenantsService {
   }
 
   async addTenant(newTenant: AddTenantDto, userId: number): Promise<Tenants> {
+    const userAccount = await this.accountRepo.findOne({ where: { userId } });
     const addNewTenant = this.tenantsRepository.create({
       ...newTenant,
       enabled: true,
     });
-
+    if (!userAccount.tenants) {
+      userAccount.tenants = []; // Tạo mảng trống nếu chưa được khởi tạo
+    }
+    userAccount.tenants.push(addNewTenant);
     try {
-      return await this.tenantsRepository.save(addNewTenant);
+      await this.tenantsRepository.save(addNewTenant);
+      await this.accountRepo.save(userAccount);
+
+      return addNewTenant;
     } catch (err) {
       console.log(err);
       throw new BadRequestException(BAD_REQUEST_RES);
