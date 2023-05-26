@@ -19,7 +19,6 @@ export class RoleGuard implements CanActivate {
       return true;
     }
     try {
-      // Get the user's role from the request object (assuming it's attached during authentication)
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
       const tokenDecrypt = this.jwtService.verify(token);
@@ -28,6 +27,10 @@ export class RoleGuard implements CanActivate {
         // User role not provided, deny access
         return false;
       }
+
+      // Store the userId and role in the request object
+      request.userId = tokenDecrypt.userId;
+      request.role = tokenDecrypt.role;
 
       // Check if the user's role is included in the allowed roles
       return role.includes(tokenDecrypt.role);
