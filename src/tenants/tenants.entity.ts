@@ -41,5 +41,5 @@ export class Tenants {
   accounts: Accounts[];
 
   @OneToMany(() => EventsManager, (eventsManager) => eventsManager.tenantCode)
-  eventsManagerEntity: EventsManager[];
+  eventsManager: EventsManager[];
 }

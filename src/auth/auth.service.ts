@@ -44,16 +44,16 @@ export class AuthService {
     const encryptPass = await hashPassword(addNewAccount.password);
 
     const newAccount: {
-      password: any;
-      phoneNumber: string;
-      role: string;
-      companyName: string;
-      fullName: string;
-      active: number;
-      tenantCode: string;
-      email: string;
-      enabled: boolean;
       username: string;
+      password: any;
+      fullName: string;
+      phoneNumber: string;
+      email: string;
+      active: number;
+      role: string;
+      tenantCode: string;
+      companyName: string;
+      enabled: boolean;
     } = {
       ...addNewAccount,
       password: encryptPass,

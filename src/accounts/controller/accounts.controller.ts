@@ -6,7 +6,7 @@ import { Role } from '../../auth/role.decorator';
 import { ERROR_RESPONSE, SUCCESS_RESPONSE } from '../../utils/message.utils';
 
 @Controller('/api/accounts')
-@ApiTags('accounts')
+@ApiTags('Accounts')
 @UseGuards(RoleGuard)
 export class AccountsController {
   constructor(private readonly accountService: AccountsService) {}
