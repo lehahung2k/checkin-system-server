@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as dotenv from 'dotenv';
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   dotenv.config();
@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('Checkin API')
     .setDescription('Checkin system API endpoints')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, configSwagger);
@@ -28,6 +29,8 @@ async function bootstrap() {
 
   // app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(process.env.PORT || 8080);
+  await app.listen(process.env.PORT || 8080, () => {
+    console.log(`Hello, this is server with port ${process.env.PORT || 8080}`);
+  });
 }
 bootstrap();

@@ -1,4 +1,56 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import {ApiBearerAuth, ApiTags} from '@nestjs/swagger';
+import { RoleGuard } from 'src/auth/role.guard';
+import {
+  ADD_SUCCESS,
+  BAD_REQUEST_RES,
+  SUCCESS_RESPONSE,
+} from 'src/utils/message.utils';
+import { EventsManagerService } from '../events-manager.service';
+import { Role } from 'src/auth/role.decorator';
+import { NewEventDto } from '../dto/new-event.dto';
 
-@Controller('events-manager')
-export class EventsManagerController {}
+@ApiTags('Events Manager')
+@Controller('api/events-manager')
+@UseGuards(RoleGuard)
+export class EventsManagerController {
+  constructor(private readonly eventService: EventsManagerService) {}
+
+  @Get()
+  @Role('admin')
+  @ApiBearerAuth()
+  async getEvents(@Res() res: any): Promise<void> {
+    const allEvents = await this.eventService.getAllEvents();
+    return await res
+      .status(HttpStatus.OK)
+      .json({ message: SUCCESS_RESPONSE, payload: allEvents });
+  }
+
+  @Post('/add-event')
+  @Role('admin', 'tenant')
+  @ApiBearerAuth()
+  async addEvent(
+    @Body() newEvent: NewEventDto,
+    @Res() res: any,
+    @Req() req: any,
+  ) {
+    try {
+      const newEventData = this.eventService.addNewEvent(newEvent);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: ADD_SUCCESS, payload: newEventData });
+    } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.BAD_REQUEST).json({ message: BAD_REQUEST_RES });
+    }
+  }
+}

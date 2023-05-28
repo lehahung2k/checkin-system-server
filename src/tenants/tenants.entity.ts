@@ -13,7 +13,7 @@ export class Tenants {
   @PrimaryGeneratedColumn({ name: 'tenantId', type: 'bigint' })
   tenantId: number;
 
-  @Column({ name: 'tenanCode', length: 255, unique: true })
+  @Column({ name: 'tenantCode', length: 255, unique: true })
   tenantCode: string;
 
   @Column({ name: 'tenantName', length: 255, nullable: false })
@@ -37,9 +37,9 @@ export class Tenants {
   @Column({ name: 'enabled', type: 'tinyint', default: true })
   enabled: boolean;
 
-  @ManyToMany(() => Accounts, (account) => account.tenantCode)
+  @ManyToMany(() => Accounts, (account) => account.tenants)
   accounts: Accounts[];
 
   @OneToMany(() => EventsManager, (eventsManager) => eventsManager.tenantCode)
-  eventsManagerEntity: EventsManager[];
+  eventsManager: EventsManager[];
 }

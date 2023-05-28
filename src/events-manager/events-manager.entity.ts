@@ -20,7 +20,7 @@ export class EventsManager {
   @Column({ name: 'eventName' })
   eventName: string;
 
-  @ManyToOne(() => Tenants, (tenants) => tenants.eventsManagerEntity)
+  @ManyToOne(() => Tenants, (tenants) => tenants.eventsManager)
   @JoinColumn({ name: 'tenantCode', referencedColumnName: 'tenantCode' })
   tenantCode: Tenants;
 
