@@ -1,5 +1,5 @@
 import { Controller, Get, HttpStatus, Res, UseGuards } from '@nestjs/common';
-import { AccountsService } from '../accounts.service';
+import { AccountsService } from '../services/accounts.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
 import { Role } from '../../auth/role.decorator';

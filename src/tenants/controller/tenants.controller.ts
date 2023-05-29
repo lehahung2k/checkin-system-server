@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { TenantsService } from '../tenants.service';
+import { TenantsService } from '../services/tenants.service';
 import { RoleGuard } from '../../auth/role.guard';
 import { Role } from '../../auth/role.decorator';
 import { AddTenantDto } from '../dto/add-tenant.dto';

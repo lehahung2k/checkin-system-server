@@ -16,7 +16,7 @@ import {
   SUCCESS_RESPONSE,
   UN_RECOGNIZED_TENANT,
 } from 'src/utils/message.utils';
-import { EventsManagerService } from '../events-manager.service';
+import { EventsManagerService } from '../services/events-manager.service';
 import { Role } from 'src/auth/role.decorator';
 import { NewEventDto } from '../dto/new-event.dto';
 

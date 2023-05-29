@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { EventsManager } from './events-manager.entity';
+import { EventsManager } from '../entities/events-manager.entity';
 
 @Injectable()
 export class EventsManagerRepository extends Repository<EventsManager> {
