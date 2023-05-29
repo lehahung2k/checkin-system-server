@@ -33,7 +33,7 @@ export class EventsManager {
   @Column({ name: 'endTime', type: 'datetime' })
   endTime: Date;
 
-  @Column({ name: 'eventImg', type: 'longblob' })
+  @Column({ name: 'eventImg', type: 'longblob', nullable: true })
   eventImg: Buffer;
 
   @Column({ name: 'enabled', type: 'tinyint', default: true })
