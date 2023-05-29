@@ -8,12 +8,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import {ApiBearerAuth, ApiTags} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/auth/role.guard';
 import {
   ADD_SUCCESS,
   BAD_REQUEST_RES,
   SUCCESS_RESPONSE,
+  UN_RECOGNIZED_TENANT,
 } from 'src/utils/message.utils';
 import { EventsManagerService } from '../events-manager.service';
 import { Role } from 'src/auth/role.decorator';
@@ -38,19 +39,17 @@ export class EventsManagerController {
   @Post('/add-event')
   @Role('admin', 'tenant')
   @ApiBearerAuth()
-  async addEvent(
-    @Body() newEvent: NewEventDto,
-    @Res() res: any,
-    @Req() req: any,
-  ) {
+  async addEvent(@Body() newEvent: NewEventDto, @Res() res, @Req() req) {
     try {
-      const newEventData = this.eventService.addNewEvent(newEvent);
+      const newEventData = await this.eventService.addNewEvent(newEvent);
       res
         .status(HttpStatus.OK)
         .json({ message: ADD_SUCCESS, payload: newEventData });
     } catch (error) {
       console.log(error);
-      res.status(HttpStatus.BAD_REQUEST).json({ message: BAD_REQUEST_RES });
+      let message = BAD_REQUEST_RES;
+      if (error.message == UN_RECOGNIZED_TENANT) message = UN_RECOGNIZED_TENANT;
+      res.status(HttpStatus.BAD_REQUEST).json({ message });
     }
   }
 }
