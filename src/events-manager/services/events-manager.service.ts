@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EventsManagerRepository } from './events-manager.repository';
-import { NewEventDto } from './dto/new-event.dto';
-import { EventsManager } from './events-manager.entity';
-import { TenantsRepository } from 'src/tenants/tenants.repository';
+import { EventsManagerRepository } from '../repository/events-manager.repository';
+import { NewEventDto } from '../dto/new-event.dto';
+import { EventsManager } from '../entities/events-manager.entity';
+import { TenantsRepository } from 'src/tenants/repository/tenants.repository';
 import { BAD_REQUEST_RES, UN_RECOGNIZED_TENANT } from 'src/utils/message.utils';
 import { plainToInstance } from "class-transformer";
 

@@ -1,4 +1,4 @@
-import { PointsOfCheckin } from 'src/point-of-checkin/point-of-checkin.entity';
+import { PointsOfCheckin } from 'src/point-of-checkin/entities/point-of-checkin.entity';
 import {
   Column,
   Entity,
@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Tenants } from '../tenants/tenants.entity';
+import { Tenants } from '../../tenants/entities/tenants.entity';
 
 @Entity({ name: 'EventsMng' })
 export class EventsManager {
