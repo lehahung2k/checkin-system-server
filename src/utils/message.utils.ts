@@ -11,3 +11,4 @@ export const SUCCESS_RESPONSE = 'Truy xuất thành công!';
 export const ERROR_RESPONSE = 'Lỗi, vui lòng thử lại';
 export const BAD_REQUEST_RES = 'Vui lòng kiểm tra dữ liệu nhập vào';
 export const ADD_SUCCESS = 'Thêm dữ liệu thành công!';
+export const TENANT_NOT_FOUND = 'Không tìm thấy doanh nghiệp';

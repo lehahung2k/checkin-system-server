@@ -18,6 +18,7 @@ import {
   BAD_REQUEST_RES,
   ERROR_RESPONSE,
   SUCCESS_RESPONSE,
+  TENANT_NOT_FOUND,
 } from '../../utils/message.utils';
 
 @Controller('api/tenants')
@@ -59,6 +60,24 @@ export class TenantsController {
     } catch (err) {
       console.log(err);
       res.status(HttpStatus.BAD_REQUEST).json({ message: BAD_REQUEST_RES });
+    }
+  }
+
+  // Lấy thông tin tenant theo id của user
+  @Get('/get-tenant')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async getTenantByName(@Res() res, @Req() req) {
+    try {
+      const userId = parseInt(req.userId);
+      const response = await this.tenantsService.checkTenantByUser(userId);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: response });
+    } catch (err) {
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: TENANT_NOT_FOUND, payload: null });
     }
   }
 }

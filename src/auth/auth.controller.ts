@@ -27,8 +27,8 @@ export class AuthController {
       const response = {
         accessToken: token,
         user: {
-          id: user.userId,
           fullName: user.fullName,
+          companyName: user.companyName,
           role: user.role,
         },
       };

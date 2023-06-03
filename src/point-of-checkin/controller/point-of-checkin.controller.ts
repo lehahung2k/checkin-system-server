@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PointOfCheckinService } from '../services/point-of-checkin.service';
 
@@ -6,4 +6,9 @@ import { PointOfCheckinService } from '../services/point-of-checkin.service';
 @Controller('point-of-checkin')
 export class PointOfCheckinController {
   constructor(private readonly pocService: PointOfCheckinService) {}
+
+  @Get('')
+  async getAllPointsOfCheckin() {
+    return 'Get all points of checkin';
+  }
 }
