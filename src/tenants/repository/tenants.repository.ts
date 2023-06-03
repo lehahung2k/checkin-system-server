@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { Tenants } from './tenants.entity';
+import { Tenants } from '../entities/tenants.entity';
 
 /**
  * TenantsRepository class for tenant repository

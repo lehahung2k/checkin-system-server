@@ -6,8 +6,8 @@ import {
   JoinTable,
   OneToMany,
 } from 'typeorm';
-import { Tenants } from '../tenants/tenants.entity';
-import { PointsOfCheckin } from '../point-of-checkin/point-of-checkin.entity';
+import { Tenants } from '../../tenants/entities/tenants.entity';
+import { PointsOfCheckin } from '../../point-of-checkin/entities/point-of-checkin.entity';
 
 @Entity({ name: 'Accounts' })
 export class Accounts {

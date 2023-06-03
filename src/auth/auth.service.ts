@@ -4,9 +4,9 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AccountsRepository } from '../accounts/accounts.repository';
+import { AccountsRepository } from '../accounts/repository/accounts.repository';
 import { AddAccountDto } from '../accounts/dto/add-account.dto';
-import { Accounts } from '../accounts/accounts.entity';
+import { Accounts } from '../accounts/entities/accounts.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { comparePassword, hashPassword } from '../utils/algorithm.utils';
 import { LoginDto } from '../accounts/dto/login.dto';
@@ -17,7 +17,7 @@ import {
   UN_RECOGNIZED_TENANT,
   USER_NOT_FOUND_MESSAGE,
 } from '../utils/message.utils';
-import { TenantsRepository } from '../tenants/tenants.repository';
+import { TenantsRepository } from '../tenants/repository/tenants.repository';
 
 @Injectable()
 export class AuthService {
@@ -44,16 +44,16 @@ export class AuthService {
     const encryptPass = await hashPassword(addNewAccount.password);
 
     const newAccount: {
-      password: any;
-      phoneNumber: string;
-      role: string;
-      companyName: string;
-      fullName: string;
-      active: number;
-      tenantCode: string;
-      email: string;
-      enabled: boolean;
       username: string;
+      password: any;
+      fullName: string;
+      phoneNumber: string;
+      email: string;
+      active: number;
+      role: string;
+      tenantCode: string;
+      companyName: string;
+      enabled: boolean;
     } = {
       ...addNewAccount,
       password: encryptPass,

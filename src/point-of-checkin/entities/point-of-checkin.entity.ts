@@ -6,10 +6,10 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
 } from 'typeorm';
-import { EventsManager } from '../events-manager/events-manager.entity';
-import { Accounts } from '../accounts/accounts.entity';
-import { Transactions } from '../transactions/transactions.entity';
-import { Devices } from '../devices/devices.entity';
+import { EventsManager } from '../../events-manager/entities/events-manager.entity';
+import { Accounts } from '../../accounts/entities/accounts.entity';
+import { Transactions } from '../../transactions/transactions.entity';
+import { Devices } from '../../devices/devices.entity';
 
 @Entity({ name: 'PointsOfCheckin' })
 export class PointsOfCheckin {

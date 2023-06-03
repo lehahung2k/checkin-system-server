@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { TenantsRepository } from './tenants.repository';
+import { TenantsRepository } from '../repository/tenants.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Tenants } from './tenants.entity';
-import { AddTenantDto } from './dto/add-tenant.dto';
-import { BAD_REQUEST_RES } from '../utils/message.utils';
-import { AccountsRepository } from '../accounts/accounts.repository';
+import { Tenants } from '../entities/tenants.entity';
+import { AddTenantDto } from '../dto/add-tenant.dto';
+import { BAD_REQUEST_RES } from '../../utils/message.utils';
+import { AccountsRepository } from '../../accounts/repository/accounts.repository';
 
 @Injectable()
 export class TenantsService {

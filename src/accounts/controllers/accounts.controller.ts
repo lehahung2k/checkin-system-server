@@ -1,12 +1,12 @@
 import { Controller, Get, HttpStatus, Res, UseGuards } from '@nestjs/common';
-import { AccountsService } from '../accounts.service';
+import { AccountsService } from '../services/accounts.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
 import { Role } from '../../auth/role.decorator';
 import { ERROR_RESPONSE, SUCCESS_RESPONSE } from '../../utils/message.utils';
 
 @Controller('/api/accounts')
-@ApiTags('accounts')
+@ApiTags('Accounts')
 @UseGuards(RoleGuard)
 export class AccountsController {
   constructor(private readonly accountService: AccountsService) {}

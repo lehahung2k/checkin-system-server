@@ -1,4 +1,4 @@
-import { PointsOfCheckin } from 'src/point-of-checkin/point-of-checkin.entity';
+import { PointsOfCheckin } from 'src/point-of-checkin/entities/point-of-checkin.entity';
 import {
   Column,
   Entity,
@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Tenants } from '../tenants/tenants.entity';
+import { Tenants } from '../../tenants/entities/tenants.entity';
 
 @Entity({ name: 'EventsMng' })
 export class EventsManager {
@@ -20,7 +20,7 @@ export class EventsManager {
   @Column({ name: 'eventName' })
   eventName: string;
 
-  @ManyToOne(() => Tenants, (tenants) => tenants.eventsManagerEntity)
+  @ManyToOne(() => Tenants, (tenants) => tenants.eventsManager)
   @JoinColumn({ name: 'tenantCode', referencedColumnName: 'tenantCode' })
   tenantCode: Tenants;
 
@@ -33,7 +33,7 @@ export class EventsManager {
   @Column({ name: 'endTime', type: 'datetime' })
   endTime: Date;
 
-  @Column({ name: 'eventImg', type: 'longblob' })
+  @Column({ name: 'eventImg', type: 'longblob', nullable: true })
   eventImg: Buffer;
 
   @Column({ name: 'enabled', type: 'tinyint', default: true })

@@ -9,11 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { TenantsService } from '../tenants.service';
+import { TenantsService } from '../services/tenants.service';
 import { RoleGuard } from '../../auth/role.guard';
 import { Role } from '../../auth/role.decorator';
 import { AddTenantDto } from '../dto/add-tenant.dto';
 import {
+  ADD_SUCCESS,
   BAD_REQUEST_RES,
   ERROR_RESPONSE,
   SUCCESS_RESPONSE,
@@ -54,7 +55,7 @@ export class TenantsController {
       const response = await this.tenantsService.addTenant(newTenant, userId);
       res
         .status(HttpStatus.OK)
-        .json({ message: SUCCESS_RESPONSE, payload: response });
+        .json({ message: ADD_SUCCESS, payload: response });
     } catch (err) {
       console.log(err);
       res.status(HttpStatus.BAD_REQUEST).json({ message: BAD_REQUEST_RES });

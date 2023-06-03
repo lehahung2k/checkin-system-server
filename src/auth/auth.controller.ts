@@ -15,7 +15,7 @@ import {
 } from '../utils/message.utils';
 
 @Controller('api/auth')
-@ApiTags('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('/login')
