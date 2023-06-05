@@ -41,7 +41,11 @@ export class EventsManagerController {
   @ApiBearerAuth()
   async addEvent(@Body() newEvent: NewEventDto, @Res() res, @Req() req) {
     try {
-      const newEventData = await this.eventService.addNewEvent(newEvent);
+      const userId = parseInt(req.userId);
+      const newEventData = await this.eventService.addNewEvent(
+        newEvent,
+        userId,
+      );
       res
         .status(HttpStatus.OK)
         .json({ message: ADD_SUCCESS, payload: newEventData });
