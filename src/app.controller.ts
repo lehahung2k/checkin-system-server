@@ -9,4 +9,8 @@ export class AppController {
   helloApi(): string {
     return this.appService.getHello();
   }
+  @Get('')
+  helloWorld(): string {
+    return this.appService.getHello();
+  }
 }
