@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { EventsManager } from '../../events-manager/entities/events-manager.entity';
 import { Accounts } from '../../accounts/entities/accounts.entity';
-import { Transactions } from '../../transactions/transactions.entity';
+import { Transactions } from '../../transactions/entities/transactions.entity';
 import { Devices } from '../../devices/devices.entity';
 
 @Entity({ name: 'PointsOfCheckin' })

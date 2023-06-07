@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
 } from 'typeorm';
-import { PointsOfCheckin } from '../point-of-checkin/entities/point-of-checkin.entity';
+import { PointsOfCheckin } from '../../point-of-checkin/entities/point-of-checkin.entity';
 
 @Entity({ name: 'Transactions' })
 export class Transactions {

@@ -23,7 +23,9 @@ async function bootstrap() {
   const corsConfig: CorsOptions = {
     origin: process.env.CLIENT_URL,
     methods: 'GET, POST, PUT, PATCH, DELETE',
-    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
+    allowedHeaders:
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization', // Include Authorization header
+    credentials: true,
   };
   app.enableCors(corsConfig);
 

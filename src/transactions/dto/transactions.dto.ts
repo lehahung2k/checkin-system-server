@@ -1,36 +1,31 @@
-import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class NewEventDto {
+export class TransactionsDto {
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
-  eventCode: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiPropertyOptional()
-  eventName: string;
+  pointCode: string;
 
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
-  tenantCode: string;
-
-  @IsString()
-  @ApiPropertyOptional()
-  eventDescription: string;
+  guestCode: string;
 
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
-  startTime: Date;
+  note: string;
 
   @IsNotEmpty()
   @ApiPropertyOptional()
-  @IsString()
-  endTime: Date;
+  createdAt: Date;
 
+  @IsNotEmpty()
   @ApiPropertyOptional()
-  eventImg: Buffer;
+  checkinImg1: Buffer;
+
+  @IsNotEmpty()
+  @ApiPropertyOptional()
+  checkinImg2: Buffer;
 }
