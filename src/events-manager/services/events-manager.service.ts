@@ -6,7 +6,11 @@ import {
 import { EventsManagerRepository } from '../repository/events-manager.repository';
 import { NewEventDto } from '../dto/new-event.dto';
 import { EventsManager } from '../entities/events-manager.entity';
-import { BAD_REQUEST_RES, UN_RECOGNIZED_TENANT } from 'src/utils/message.utils';
+import {
+  BAD_REQUEST_RES,
+  EVENT_NOT_FOUND,
+  UN_RECOGNIZED_TENANT,
+} from 'src/utils/message.utils';
 import { plainToInstance } from 'class-transformer';
 import { Tenants } from 'src/tenants/entities/tenants.entity';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
@@ -20,6 +24,37 @@ export class EventsManagerService {
 
   async getAllEvents(): Promise<EventsManager[]> {
     return this.eventsMngRepo.find();
+  }
+
+  async getEventsByTenant(userId: number): Promise<EventsManager[]> {
+    const tenant = await this.findTenantByUserId(userId);
+    if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
+    const tenantCode: string = tenant.tenantCode;
+    try {
+      return await this.eventsMngRepo
+        .createQueryBuilder('EventsManager')
+        .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
+        .getMany();
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException(EVENT_NOT_FOUND);
+    }
+  }
+
+  async getEventDetails(userId: number, eventId: number) {
+    const tenant = await this.findTenantByUserId(userId);
+    if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
+    const tenantCode: string = tenant.tenantCode;
+    try {
+      return await this.eventsMngRepo
+        .createQueryBuilder('EventsManager')
+        .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
+        .andWhere('EventsManager.eventId = :eventId', { eventId })
+        .getOne();
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException(EVENT_NOT_FOUND);
+    }
   }
 
   async addNewEvent(
@@ -52,7 +87,6 @@ export class EventsManagerService {
       .leftJoinAndSelect('Accounts.tenants', 'tenants')
       .where('Accounts.userId = :userId', { userId })
       .getOne();
-    const tenant = account.tenants[0];
-    return tenant;
+    return account.tenants[0];
   }
 }

@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -55,5 +56,32 @@ export class EventsManagerController {
       if (error.message == UN_RECOGNIZED_TENANT) message = UN_RECOGNIZED_TENANT;
       res.status(HttpStatus.BAD_REQUEST).json({ message });
     }
+  }
+
+  @Get('/events')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async getEventsByTenant(@Res() res: any, @Req() req: any): Promise<void> {
+    const userId = parseInt(req.userId);
+    const events = await this.eventService.getEventsByTenant(userId);
+    return await res
+      .status(HttpStatus.OK)
+      .json({ message: SUCCESS_RESPONSE, payload: events });
+  }
+
+  // Get details of an event
+  @Get('/events/view')
+  @Role('tenant', 'poc')
+  @ApiBearerAuth()
+  async getEventDetails(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('eventId') eventId: number,
+  ): Promise<void> {
+    const userId = parseInt(req.userId);
+    const event = await this.eventService.getEventDetails(userId, eventId);
+    return await res
+      .status(HttpStatus.OK)
+      .json({ message: SUCCESS_RESPONSE, payload: event });
   }
 }

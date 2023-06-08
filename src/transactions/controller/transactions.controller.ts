@@ -5,7 +5,7 @@ import { Role } from 'src/auth/role.decorator';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('transactions')
-@ApiTags('transactions')
+@ApiTags('Transactions')
 @UseGuards(RoleGuard)
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
