@@ -2,6 +2,7 @@ export const USER_NOT_FOUND_MESSAGE = 'User not found!';
 export const INCORRECT_PASSWORD = 'Incorrect password';
 export const LOGIN_SUCCESS = 'Đăng nhập thành công';
 export const UN_AUTHORED_MESSAGE = 'Tên đăng nhập hoặc mật khẩu không đúng';
+export const UN_ACTIVATE_ACCOUNT = 'Tài khoản đã bị ngừng kích hoạt';
 export const DUPLICATE_EMAIL_OR_USERNAME =
   'Tên đăng nhập hoặc email đã được sử dụng';
 export const CREATE_ACCOUNT_SUCCESS = 'Create account success';

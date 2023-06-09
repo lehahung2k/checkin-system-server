@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   CREATE_ACCOUNT_FAILED,
   INCORRECT_PASSWORD,
+  UN_ACTIVATE_ACCOUNT,
   UN_RECOGNIZED_TENANT,
   USER_NOT_FOUND_MESSAGE,
 } from '../utils/message.utils';
@@ -34,6 +35,7 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException(USER_NOT_FOUND_MESSAGE);
     } else {
+      if (!user.enabled) throw new NotFoundException(UN_ACTIVATE_ACCOUNT);
       const checkPass = await comparePassword(password, user.password);
       if (!checkPass) throw new UnauthorizedException(INCORRECT_PASSWORD);
       else return user;

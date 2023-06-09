@@ -47,7 +47,7 @@ export class AuthController {
         statusCode = HttpStatus.UNAUTHORIZED;
       }
 
-      res.status(statusCode).json({ message: UN_AUTHORED_MESSAGE });
+      res.status(statusCode).json({ message: err.message });
     }
   }
   @Post('/register')
