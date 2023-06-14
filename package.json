@@ -1,8 +1,8 @@
 {
   "name": "checkin-system-server",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Check-in system",
+  "author": "HungLH",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

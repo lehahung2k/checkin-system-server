@@ -4,4 +4,8 @@ import { GuestsRepository } from '../repository/guests.repository';
 @Injectable()
 export class GuestsService {
   constructor(private readonly guestsRepo: GuestsRepository) {}
+
+  getAllGuests() {
+    return Promise.resolve(undefined);
+  }
 }
