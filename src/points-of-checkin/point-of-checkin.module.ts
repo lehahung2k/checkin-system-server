@@ -6,6 +6,7 @@ import { PointsOfCheckinService } from './services/point-of-checkin.service';
 import { PointsOfCheckinRepository } from './repository/point-of-checkin.repository';
 import { EventsManagerRepository } from 'src/events-manager/repository/events-manager.repository';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
+import { AccountsService } from '../accounts/services/accounts.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PointsOfCheckin])],
@@ -15,6 +16,7 @@ import { AccountsRepository } from 'src/accounts/repository/accounts.repository'
     PointsOfCheckinRepository,
     EventsManagerRepository,
     AccountsRepository,
+    AccountsService,
   ],
   exports: [PointsOfCheckinRepository],
 })

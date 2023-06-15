@@ -10,6 +10,7 @@ import { EventsManagerRepository } from 'src/events-manager/repository/events-ma
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { plainToInstance } from 'class-transformer';
 import { EVENT_NOT_FOUND } from 'src/utils/message.utils';
+import { AccountsService } from '../../accounts/services/accounts.service';
 
 @Injectable()
 export class PointsOfCheckinService {
@@ -17,6 +18,7 @@ export class PointsOfCheckinService {
     private readonly pointsOfCheckinRepo: PointsOfCheckinRepository,
     private readonly eventsManagerRepo: EventsManagerRepository,
     private readonly accountsRepo: AccountsRepository,
+    private readonly accountsService: AccountsService,
   ) {}
 
   async getAllPointsOfCheckin(): Promise<PointsOfCheckin[]> {
@@ -51,5 +53,18 @@ export class PointsOfCheckinService {
       console.log(error);
       throw new BadRequestException(EVENT_NOT_FOUND);
     }
+  }
+
+  async getPointOfCheckinByUsername(
+    userId: number,
+  ): Promise<PointsOfCheckin[]> {
+    const pocAccounts = await this.accountsService.getAllPoc(userId);
+    const usernames = pocAccounts.map((account) => account.username);
+    // Lấy tất cả points of checkin có username trùng với username của list pocAccount (mỗi pocAccount có 1 username)
+    const listPointOfCheckin = await this.pointsOfCheckinRepo
+      .createQueryBuilder('PointsOfCheckin')
+      .where('PointsOfCheckin.username IN (:...usernames)', { usernames })
+      .getMany();
+    return listPointOfCheckin;
   }
 }
