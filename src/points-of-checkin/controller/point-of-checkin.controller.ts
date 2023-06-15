@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { PointOfCheckinService } from '../services/point-of-checkin.service';
+import { PointsOfCheckinService } from '../services/point-of-checkin.service';
 import { EVENT_NOT_FOUND, SUCCESS_RESPONSE } from 'src/utils/message.utils';
 import { Role } from 'src/auth/role.decorator';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
@@ -18,8 +18,8 @@ import { RoleGuard } from 'src/auth/role.guard';
 @ApiTags('Points of Checkin')
 @Controller('point-of-checkin')
 @UseGuards(RoleGuard)
-export class PointOfCheckinController {
-  constructor(private readonly pocService: PointOfCheckinService) {}
+export class PointsOfCheckinController {
+  constructor(private readonly pocService: PointsOfCheckinService) {}
 
   @Get('')
   @Role('admin', 'tenant')

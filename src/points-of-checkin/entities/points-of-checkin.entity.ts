@@ -27,7 +27,7 @@ export class PointsOfCheckin {
 
   @ManyToOne(
     () => EventsManager,
-    (eventsManager) => eventsManager.pointOfCheckin,
+    (eventsManager) => eventsManager.pointsOfCheckin,
   )
   @JoinColumn({ name: 'eventCode', referencedColumnName: 'eventCode' })
   eventCode: EventsManager;

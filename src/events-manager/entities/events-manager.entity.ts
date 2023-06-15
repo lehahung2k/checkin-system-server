@@ -1,4 +1,4 @@
-import { PointsOfCheckin } from 'src/point-of-checkin/entities/point-of-checkin.entity';
+import { PointsOfCheckin } from 'src/points-of-checkin/entities/points-of-checkin.entity';
 import {
   Column,
   Entity,
@@ -43,5 +43,5 @@ export class EventsManager {
     () => PointsOfCheckin,
     (pointsOfCheckin) => pointsOfCheckin.eventCode,
   )
-  pointOfCheckin: Promise<PointsOfCheckin[]>;
+  pointsOfCheckin: Promise<PointsOfCheckin[]>;
 }
