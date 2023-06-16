@@ -15,6 +15,7 @@ export class Transactions {
   @ManyToOne(
     () => PointsOfCheckin,
     (pointsOfCheckin) => pointsOfCheckin.transactions,
+    { nullable: false },
   )
   @JoinColumn({ name: 'pointCode', referencedColumnName: 'pointCode' })
   pointCode: PointsOfCheckin;
