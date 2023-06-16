@@ -6,7 +6,7 @@ import { PointsOfCheckin } from '../points-of-checkin/entities/points-of-checkin
 import { Guests } from '../guests/entities/guests.entity';
 import { Transactions } from '../transactions/entities/transactions.entity';
 import { Tenants } from '../tenants/entities/tenants.entity';
-import { Devices } from '../devices/devices.entity';
+import { Devices } from '../devices/entities/devices.entity';
 
 dotenv.config();
 
