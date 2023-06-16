@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PointsOfCheckinService } from '../services/point-of-checkin.service';
-import { EVENT_NOT_FOUND, SUCCESS_RESPONSE } from 'src/utils/message.utils';
+import {
+  ERROR_RESPONSE,
+  EVENT_NOT_FOUND,
+  SUCCESS_RESPONSE,
+} from 'src/utils/message.utils';
 import { Role } from 'src/auth/role.decorator';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { RoleGuard } from 'src/auth/role.guard';
@@ -51,6 +55,23 @@ export class PointsOfCheckinController {
     } catch (error) {
       console.log(error);
       res.status(HttpStatus.BAD_REQUEST).json({ message: EVENT_NOT_FOUND });
+    }
+  }
+
+  @Get('/poc')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async getAllPoc(@Res() res: any, @Req() req: any): Promise<void> {
+    try {
+      const userId = parseInt(req.userId);
+      const poc = await this.pocService.getPointOfCheckinByUsername(userId);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: poc });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: ERROR_RESPONSE });
     }
   }
 }

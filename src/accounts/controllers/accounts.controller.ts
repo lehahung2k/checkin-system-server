@@ -1,4 +1,11 @@
-import { Controller, Get, HttpStatus, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AccountsService } from '../services/accounts.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
@@ -28,11 +35,12 @@ export class AccountsController {
   }
 
   @Get('/poc')
-  @Role('admin')
+  @Role('tenant')
   @ApiBearerAuth()
-  async getAllPoc(@Res() res: any): Promise<void> {
+  async getAllPoc(@Res() res: any, @Req() req: any): Promise<void> {
     try {
-      const pocAccounts = await this.accountService.getAllPoc();
+      const userId = parseInt(req.userId);
+      const pocAccounts = await this.accountService.getAllPoc(userId);
       res
         .status(HttpStatus.OK)
         .json({ message: SUCCESS_RESPONSE, payload: pocAccounts });
