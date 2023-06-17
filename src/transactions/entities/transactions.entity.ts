@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
 } from 'typeorm';
-import { PointsOfCheckin } from '../../point-of-checkin/entities/point-of-checkin.entity';
+import { PointsOfCheckin } from '../../points-of-checkin/entities/points-of-checkin.entity';
 
 @Entity({ name: 'Transactions' })
 export class Transactions {
@@ -15,6 +15,7 @@ export class Transactions {
   @ManyToOne(
     () => PointsOfCheckin,
     (pointsOfCheckin) => pointsOfCheckin.transactions,
+    { nullable: false },
   )
   @JoinColumn({ name: 'pointCode', referencedColumnName: 'pointCode' })
   pointCode: PointsOfCheckin;

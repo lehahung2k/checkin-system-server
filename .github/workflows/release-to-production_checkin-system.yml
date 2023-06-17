@@ -51,5 +51,5 @@ jobs:
         with:
           app-name: 'checkin-system'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_23F6BF8638B34AA58E1F1086877C1296 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DE14E2A6F0904016960B838C0F27A3B8 }}
           package: .

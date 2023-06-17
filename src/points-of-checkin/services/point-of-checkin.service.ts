@@ -3,28 +3,30 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PointOfCheckinRepository } from '../repository/point-of-checkin.repository';
-import { PointsOfCheckin } from '../entities/point-of-checkin.entity';
+import { PointsOfCheckinRepository } from '../repository/point-of-checkin.repository';
+import { PointsOfCheckin } from '../entities/points-of-checkin.entity';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { EventsManagerRepository } from 'src/events-manager/repository/events-manager.repository';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { plainToInstance } from 'class-transformer';
 import { EVENT_NOT_FOUND } from 'src/utils/message.utils';
+import { AccountsService } from '../../accounts/services/accounts.service';
 
 @Injectable()
-export class PointOfCheckinService {
+export class PointsOfCheckinService {
   constructor(
-    private readonly pointOfCheckinRepo: PointOfCheckinRepository,
+    private readonly pointsOfCheckinRepo: PointsOfCheckinRepository,
     private readonly eventsManagerRepo: EventsManagerRepository,
     private readonly accountsRepo: AccountsRepository,
+    private readonly accountsService: AccountsService,
   ) {}
 
   async getAllPointsOfCheckin(): Promise<PointsOfCheckin[]> {
-    return await this.pointOfCheckinRepo.find();
+    return await this.pointsOfCheckinRepo.find();
   }
 
   async getPointOfCheckinById(pointId: number): Promise<PointsOfCheckin> {
-    return await this.pointOfCheckinRepo.findOne({
+    return await this.pointsOfCheckinRepo.findOne({
       where: { pointId: pointId },
     });
   }
@@ -46,10 +48,28 @@ export class PointOfCheckinService {
         ...newPoint,
         enabled: true,
       });
-      return await this.pointOfCheckinRepo.save(addPoint);
+      return await this.pointsOfCheckinRepo.save(addPoint);
     } catch (error) {
       console.log(error);
       throw new BadRequestException(EVENT_NOT_FOUND);
+    }
+  }
+
+  async getPointOfCheckinByUsername(
+    userId: number,
+  ): Promise<PointsOfCheckin[]> {
+    const pocAccounts = await this.accountsService.getAllPoc(userId);
+    const usernames = pocAccounts.map((account) => account.username);
+    // Lấy tất cả points of checkin có username trùng với username của list pocAccount (mỗi pocAccount có 1 username)
+    try {
+      const listPointOfCheckin = await this.pointsOfCheckinRepo
+        .createQueryBuilder('pointOfCheckin')
+        .where('pointOfCheckin.username IN (:...usernames)', { usernames })
+        .getMany();
+      console.log(listPointOfCheckin);
+      return listPointOfCheckin;
+    } catch (error) {
+      console.log(error);
     }
   }
 }

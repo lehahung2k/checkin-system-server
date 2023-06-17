@@ -3,6 +3,7 @@ import { AccountsRepository } from '../repository/accounts.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountResDto } from '../dto/account-res.dto';
 import { Accounts } from '../entities/accounts.entity';
+import { Tenants } from '../../tenants/entities/tenants.entity';
 
 @Injectable()
 export class AccountsService {
@@ -15,13 +16,18 @@ export class AccountsService {
     return this.mappingResponse(listAccount);
   }
 
-  async getAllPoc(): Promise<AccountResDto[]> {
+  // Tìm toàn bộ POC đã đăng ký với tenantCode được doanh nghiệp cung cấp
+  async getAllPoc(userId: number): Promise<AccountResDto[]> {
+    const tenant = await this.findTenantByUserId(userId);
     const listPoc = await this.usersRepository
       .createQueryBuilder('account')
       .where('account.role = :role', { role: 'poc' })
       .getMany();
-    console.log(listPoc);
-    return this.mappingResponse(listPoc);
+    // Nếu tenantCode của POC trùng với tenantCode của doanh nghiệp thì trả đẩy tenant vào listPoc và trả về
+    const pocsAccounts = listPoc.filter(
+      (poc) => poc.tenantCode === tenant.tenantCode,
+    );
+    return this.mappingResponse(pocsAccounts);
   }
 
   async getAllAccountTenant(): Promise<AccountResDto[]> {
@@ -30,6 +36,16 @@ export class AccountsService {
       .where('account.role = :role', { role: 'tenant' })
       .getMany();
     return this.mappingResponse(listTenant);
+  }
+
+  // Tìm kiếm tenant theo userId dựa vào quan hệ nhiều nhiều của bảng accounts và tenants
+  async findTenantByUserId(userId: number): Promise<Tenants> {
+    const account = await this.usersRepository
+      .createQueryBuilder('Accounts')
+      .leftJoinAndSelect('Accounts.tenants', 'tenants')
+      .where('Accounts.userId = :userId', { userId })
+      .getOne();
+    return account.tenants[0];
   }
 
   mappingResponse(accountRes: Accounts[]): AccountResDto[] {

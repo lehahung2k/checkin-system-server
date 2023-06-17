@@ -14,6 +14,7 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { Tenants } from 'src/tenants/entities/tenants.entity';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
+import { EventResponseDto } from '../dto/event-response.dto';
 
 @Injectable()
 export class EventsManagerService {
@@ -41,16 +42,27 @@ export class EventsManagerService {
     }
   }
 
-  async getEventDetails(userId: number, eventId: number) {
+  async getEventDetails(
+    userId: number,
+    eventId: number,
+  ): Promise<EventResponseDto> {
     const tenant = await this.findTenantByUserId(userId);
     if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
     const tenantCode: string = tenant.tenantCode;
     try {
-      return await this.eventsMngRepo
+      const event = await this.eventsMngRepo
         .createQueryBuilder('EventsManager')
         .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
         .andWhere('EventsManager.eventId = :eventId', { eventId })
         .getOne();
+      let base64Image = '';
+      if (event.eventImg)
+        base64Image = Buffer.from(event.eventImg).toString('utf8');
+      const eventRes = plainToInstance(EventResponseDto, {
+        ...event,
+        eventImg: base64Image,
+      });
+      return eventRes;
     } catch (e) {
       console.log(e);
       throw new NotFoundException(EVENT_NOT_FOUND);
