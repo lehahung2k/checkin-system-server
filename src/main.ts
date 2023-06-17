@@ -4,10 +4,19 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
+import { readFileSync } from 'fs';
 
 async function bootstrap() {
   dotenv.config();
-  const app = await NestFactory.create(AppModule);
+
+  // Đọc chứng chỉ và khóa riêng tư từ file PEM
+  const httpsOptions: HttpsOptions = {
+    key: readFileSync(`${process.env.SSL_KEY_FILE}`),
+    cert: readFileSync(`${process.env.SSL_CRT_FILE}`),
+  };
+
+  const app = await NestFactory.create(AppModule, {httpsOptions});
 
   const configSwagger = new DocumentBuilder()
     .setTitle('Checkin API')

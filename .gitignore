@@ -37,3 +37,5 @@ lerna-debug.log*
 package-lock.json
 
 .env
+
+/build
