@@ -61,10 +61,15 @@ export class PointsOfCheckinService {
     const pocAccounts = await this.accountsService.getAllPoc(userId);
     const usernames = pocAccounts.map((account) => account.username);
     // Lấy tất cả points of checkin có username trùng với username của list pocAccount (mỗi pocAccount có 1 username)
-    const listPointOfCheckin = await this.pointsOfCheckinRepo
-      .createQueryBuilder('PointsOfCheckin')
-      .where('PointsOfCheckin.username IN (:...usernames)', { usernames })
-      .getMany();
-    return listPointOfCheckin;
+    try {
+      const listPointOfCheckin = await this.pointsOfCheckinRepo
+        .createQueryBuilder('pointOfCheckin')
+        .where('pointOfCheckin.username IN (:...usernames)', { usernames })
+        .getMany();
+      console.log(listPointOfCheckin);
+      return listPointOfCheckin;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
