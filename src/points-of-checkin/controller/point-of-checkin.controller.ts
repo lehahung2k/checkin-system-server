@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -64,7 +65,28 @@ export class PointsOfCheckinController {
   async getAllPoc(@Res() res: any, @Req() req: any): Promise<void> {
     try {
       const userId = parseInt(req.userId);
-      const poc = await this.pocService.getPointOfCheckinByUsername(userId);
+      const poc = await this.pocService.getPointsOfCheckinByUsername(userId);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: poc });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: ERROR_RESPONSE });
+    }
+  }
+
+  @Get('/poc/view')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async getPocByUsername(
+    @Query('username') username: string,
+    @Res() res: any,
+    @Req() req: any,
+  ): Promise<void> {
+    try {
+      const userId = parseInt(req.userId);
+      const poc = await this.pocService.getPocByUsername(userId, username);
       res
         .status(HttpStatus.OK)
         .json({ message: SUCCESS_RESPONSE, payload: poc });

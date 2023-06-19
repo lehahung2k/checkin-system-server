@@ -30,6 +30,14 @@ export class AccountsService {
     return this.mappingResponse(pocsAccounts);
   }
 
+  async getPocByUsername(userId: number, username: string) {
+    const tenant = await this.findTenantByUserId(userId);
+    const poc = await this.usersRepository.findOne({
+      where: { username: username, tenantCode: tenant.tenantCode, role: 'poc' },
+    });
+    return poc;
+  }
+
   async getAllAccountTenant(): Promise<AccountResDto[]> {
     const listTenant = await this.usersRepository
       .createQueryBuilder('account')

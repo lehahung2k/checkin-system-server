@@ -55,7 +55,7 @@ export class PointsOfCheckinService {
     }
   }
 
-  async getPointOfCheckinByUsername(
+  async getPointsOfCheckinByUsername(
     userId: number,
   ): Promise<PointsOfCheckin[]> {
     const pocAccounts = await this.accountsService.getAllPoc(userId);
@@ -68,6 +68,25 @@ export class PointsOfCheckinService {
         .getMany();
       console.log(listPointOfCheckin);
       return listPointOfCheckin;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getPocByUsername(
+    userId: number,
+    username: string,
+  ): Promise<PointsOfCheckin> {
+    try {
+      const pocAccount = await this.accountsService.getPocByUsername(
+        userId,
+        username,
+      );
+      const usernameFind = pocAccount.username;
+      return await this.pointsOfCheckinRepo
+        .createQueryBuilder('pointOfCheckin')
+        .where('pointOfCheckin.username = :usernameFind', { usernameFind })
+        .getOne();
     } catch (error) {
       console.log(error);
     }
