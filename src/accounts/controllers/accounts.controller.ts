@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -10,7 +11,11 @@ import { AccountsService } from '../services/accounts.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
 import { Role } from '../../auth/role.decorator';
-import { ERROR_RESPONSE, SUCCESS_RESPONSE } from '../../utils/message.utils';
+import {
+  ERROR_RESPONSE,
+  SUCCESS_RESPONSE,
+  USER_NOT_FOUND_MESSAGE,
+} from '../../utils/message.utils';
 
 @Controller('/api/accounts')
 @ApiTags('Accounts')
@@ -48,6 +53,27 @@ export class AccountsController {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: ERROR_RESPONSE, payload: null });
+    }
+  }
+
+  @Get('/poc/view')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async getPocByUsername(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('username') username: string,
+  ): Promise<void> {
+    try {
+      const userId = parseInt(req.userId);
+      const poc = await this.accountService.getPocByUsername(userId, username);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: poc });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: USER_NOT_FOUND_MESSAGE });
     }
   }
 

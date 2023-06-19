@@ -32,7 +32,7 @@ export class EventsManagerController {
   @ApiBearerAuth()
   async getEvents(@Res() res: any): Promise<void> {
     const allEvents = await this.eventService.getAllEvents();
-    return await res
+    res
       .status(HttpStatus.OK)
       .json({ message: SUCCESS_RESPONSE, payload: allEvents });
   }
@@ -64,12 +64,11 @@ export class EventsManagerController {
   async getEventsByTenant(@Res() res: any, @Req() req: any): Promise<void> {
     const userId = parseInt(req.userId);
     const events = await this.eventService.getEventsByTenant(userId);
-    return await res
+    res
       .status(HttpStatus.OK)
       .json({ message: SUCCESS_RESPONSE, payload: events });
   }
 
-  // Get details of an event
   @Get('/events/view')
   @Role('tenant', 'poc')
   @ApiBearerAuth()
@@ -80,7 +79,7 @@ export class EventsManagerController {
   ): Promise<void> {
     const userId = parseInt(req.userId);
     const event = await this.eventService.getEventDetails(userId, eventId);
-    return await res
+    res
       .status(HttpStatus.OK)
       .json({ message: SUCCESS_RESPONSE, payload: event });
   }

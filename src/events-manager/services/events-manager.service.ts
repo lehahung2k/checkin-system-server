@@ -24,17 +24,18 @@ export class EventsManagerService {
   ) {}
 
   async getAllEvents(): Promise<EventResponseDto[]> {
-    const events = this.eventsMngRepo.find();
-    // đưa events về dạng EventResponseDto
-    const eventsRes = (await events).map((event) => {
-      let base64Image = '';
-      if (event.eventImg)
-        base64Image = Buffer.from(event.eventImg).toString('utf8');
-      return plainToInstance(EventResponseDto, {
-        ...event,
-        eventImg: base64Image,
-      });
-    });
+    const events = await this.eventsMngRepo.find();
+    const eventsRes = await Promise.all(
+      events.map(async (event) => {
+        let base64Image = '';
+        if (event.eventImg)
+          base64Image = Buffer.from(event.eventImg).toString('utf8');
+        return plainToInstance(EventResponseDto, {
+          ...event,
+          eventImg: base64Image,
+        });
+      }),
+    );
     return eventsRes;
   }
 
@@ -47,16 +48,17 @@ export class EventsManagerService {
         .createQueryBuilder('EventsManager')
         .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
         .getMany();
-      // đưa events về dạng EventResponseDto
-      const eventsRes = (await events).map((event) => {
-        let base64Image = '';
-        if (event.eventImg)
-          base64Image = Buffer.from(event.eventImg).toString('utf8');
-        return plainToInstance(EventResponseDto, {
-          ...event,
-          eventImg: base64Image,
-        });
-      });
+      const eventsRes = await Promise.all(
+        events.map(async (event) => {
+          let base64Image = '';
+          if (event.eventImg)
+            base64Image = Buffer.from(event.eventImg).toString('utf8');
+          return plainToInstance(EventResponseDto, {
+            ...event,
+            eventImg: base64Image,
+          });
+        }),
+      );
       return eventsRes;
     } catch (e) {
       console.log(e);
@@ -105,7 +107,6 @@ export class EventsManagerService {
     });
 
     try {
-      // Save the new event to the database
       return await this.eventsMngRepo.save(addEvent);
     } catch (error) {
       console.log(error);
