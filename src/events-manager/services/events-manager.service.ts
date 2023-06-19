@@ -23,19 +23,41 @@ export class EventsManagerService {
     private readonly accountsRepo: AccountsRepository,
   ) {}
 
-  async getAllEvents(): Promise<EventsManager[]> {
-    return this.eventsMngRepo.find();
+  async getAllEvents(): Promise<EventResponseDto[]> {
+    const events = this.eventsMngRepo.find();
+    // đưa events về dạng EventResponseDto
+    const eventsRes = (await events).map((event) => {
+      let base64Image = '';
+      if (event.eventImg)
+        base64Image = Buffer.from(event.eventImg).toString('utf8');
+      return plainToInstance(EventResponseDto, {
+        ...event,
+        eventImg: base64Image,
+      });
+    });
+    return eventsRes;
   }
 
-  async getEventsByTenant(userId: number): Promise<EventsManager[]> {
+  async getEventsByTenant(userId: number): Promise<EventResponseDto[]> {
     const tenant = await this.findTenantByUserId(userId);
     if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
     const tenantCode: string = tenant.tenantCode;
     try {
-      return await this.eventsMngRepo
+      const events = await this.eventsMngRepo
         .createQueryBuilder('EventsManager')
         .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
         .getMany();
+      // đưa events về dạng EventResponseDto
+      const eventsRes = (await events).map((event) => {
+        let base64Image = '';
+        if (event.eventImg)
+          base64Image = Buffer.from(event.eventImg).toString('utf8');
+        return plainToInstance(EventResponseDto, {
+          ...event,
+          eventImg: base64Image,
+        });
+      });
+      return eventsRes;
     } catch (e) {
       console.log(e);
       throw new NotFoundException(EVENT_NOT_FOUND);
@@ -81,7 +103,6 @@ export class EventsManagerService {
       ...newEvent,
       enabled: true,
     });
-    console.log(addEvent);
 
     try {
       // Save the new event to the database
