@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
+import * as express from 'express';
 
 async function bootstrap() {
   dotenv.config();
@@ -29,6 +30,9 @@ async function bootstrap() {
   };
   app.enableCors(corsConfig);
 
+  // Tăng giới hạn kích thước payload
+  app.use(express.json({ limit: '5mb' }));
+  app.use(express.urlencoded({ limit: '5mb', extended: true }));
   // app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT || 8080, () => {
