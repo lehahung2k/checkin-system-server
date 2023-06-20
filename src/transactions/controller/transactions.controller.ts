@@ -4,7 +4,7 @@ import { RoleGuard } from 'src/auth/role.guard';
 import { Role } from 'src/auth/role.decorator';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
-@Controller('transactions')
+@Controller('api/transactions')
 @ApiTags('Transactions')
 @UseGuards(RoleGuard)
 export class TransactionsController {

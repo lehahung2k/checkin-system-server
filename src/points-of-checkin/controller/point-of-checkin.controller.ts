@@ -13,15 +13,15 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PointsOfCheckinService } from '../services/point-of-checkin.service';
 import {
   ERROR_RESPONSE,
-  EVENT_NOT_FOUND,
-  SUCCESS_RESPONSE,
-} from 'src/utils/message.utils';
+  EVENT_NOT_FOUND, POC_NOT_FOUND,
+  SUCCESS_RESPONSE
+} from "src/utils/message.utils";
 import { Role } from 'src/auth/role.decorator';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { RoleGuard } from 'src/auth/role.guard';
 
 @ApiTags('Points of Checkin')
-@Controller('point-of-checkin')
+@Controller('api/point-of-checkin')
 @UseGuards(RoleGuard)
 export class PointsOfCheckinController {
   constructor(private readonly pocService: PointsOfCheckinService) {}
@@ -71,8 +71,8 @@ export class PointsOfCheckinController {
         .json({ message: SUCCESS_RESPONSE, payload: poc });
     } catch (error) {
       res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: ERROR_RESPONSE });
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: POC_NOT_FOUND, payload: null });
     }
   }
 
@@ -93,7 +93,7 @@ export class PointsOfCheckinController {
     } catch (error) {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: ERROR_RESPONSE });
+        .json({ message: ERROR_RESPONSE, payload: null });
     }
   }
 }

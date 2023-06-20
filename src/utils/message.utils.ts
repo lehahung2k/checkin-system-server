@@ -14,3 +14,4 @@ export const BAD_REQUEST_RES = 'Vui lòng kiểm tra dữ liệu nhập vào';
 export const ADD_SUCCESS = 'Thêm dữ liệu thành công!';
 export const TENANT_NOT_FOUND = 'Không tìm thấy doanh nghiệp';
 export const EVENT_NOT_FOUND = 'Sự kiện đã kết thúc hoặc không tồn tại!';
+export const POC_NOT_FOUND = 'Không tìm thấy POC';
