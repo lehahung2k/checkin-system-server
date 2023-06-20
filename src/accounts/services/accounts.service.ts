@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { AccountsRepository } from '../repository/accounts.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountResDto } from '../dto/account-res.dto';
 import { Accounts } from '../entities/accounts.entity';
 import { Tenants } from '../../tenants/entities/tenants.entity';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AccountsService {
@@ -14,6 +15,16 @@ export class AccountsService {
   async getAll(): Promise<AccountResDto[]> {
     const listAccount = await this.usersRepository.find();
     return this.mappingResponse(listAccount);
+  }
+
+  async getAccountById(userId: number): Promise<AccountResDto> {
+    const account = await this.usersRepository
+      .createQueryBuilder('account')
+      .where('account.userId = :userId', { userId })
+      .getOne();
+    console.log(account);
+    // change to accountResDto
+    return plainToInstance(AccountResDto, account);
   }
 
   // Tìm toàn bộ POC đã đăng ký với tenantCode được doanh nghiệp cung cấp
@@ -35,6 +46,7 @@ export class AccountsService {
     const poc = await this.usersRepository.findOne({
       where: { username: username, tenantCode: tenant.tenantCode, role: 'poc' },
     });
+    if (!poc) throw new NotFoundException();
     return poc;
   }
 

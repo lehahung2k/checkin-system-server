@@ -9,7 +9,7 @@ import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { EventsManagerRepository } from 'src/events-manager/repository/events-manager.repository';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { plainToInstance } from 'class-transformer';
-import { EVENT_NOT_FOUND } from 'src/utils/message.utils';
+import { EVENT_NOT_FOUND, POC_NOT_FOUND } from 'src/utils/message.utils';
 import { AccountsService } from '../../accounts/services/accounts.service';
 
 @Injectable()
@@ -23,12 +23,6 @@ export class PointsOfCheckinService {
 
   async getAllPointsOfCheckin(): Promise<PointsOfCheckin[]> {
     return await this.pointsOfCheckinRepo.find();
-  }
-
-  async getPointOfCheckinById(pointId: number): Promise<PointsOfCheckin> {
-    return await this.pointsOfCheckinRepo.findOne({
-      where: { pointId: pointId },
-    });
   }
 
   async createPointOfCheckin(
@@ -61,34 +55,30 @@ export class PointsOfCheckinService {
     const pocAccounts = await this.accountsService.getAllPoc(userId);
     const usernames = pocAccounts.map((account) => account.username);
     // Lấy tất cả points of checkin có username trùng với username của list pocAccount (mỗi pocAccount có 1 username)
-    try {
-      const listPointOfCheckin = await this.pointsOfCheckinRepo
-        .createQueryBuilder('pointOfCheckin')
-        .where('pointOfCheckin.username IN (:...usernames)', { usernames })
-        .getMany();
-      console.log(listPointOfCheckin);
-      return listPointOfCheckin;
-    } catch (error) {
-      console.log(error);
-    }
+    const listPointOfCheckin = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .where('pointOfCheckin.username IN (:...usernames)', { usernames })
+      .getMany();
+    if (!listPointOfCheckin) throw new NotFoundException(POC_NOT_FOUND);
+    console.log(listPointOfCheckin);
+    return listPointOfCheckin;
   }
 
   async getPocByUsername(
     userId: number,
     username: string,
   ): Promise<PointsOfCheckin> {
-    try {
-      const pocAccount = await this.accountsService.getPocByUsername(
-        userId,
-        username,
-      );
-      const usernameFind = pocAccount.username;
-      return await this.pointsOfCheckinRepo
-        .createQueryBuilder('pointOfCheckin')
-        .where('pointOfCheckin.username = :usernameFind', { usernameFind })
-        .getOne();
-    } catch (error) {
-      console.log(error);
-    }
+    const pocAccount = await this.accountsService.getPocByUsername(
+      userId,
+      username,
+    );
+    if (!pocAccount) throw new NotFoundException(POC_NOT_FOUND);
+    const usernameFind = pocAccount.username;
+    const poc = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .where('pointOfCheckin.username = :usernameFind', { usernameFind })
+      .getOne();
+    if (!poc) throw new NotFoundException(POC_NOT_FOUND);
+    return poc;
   }
 }

@@ -39,6 +39,23 @@ export class AccountsController {
     }
   }
 
+  @Get('/details')
+  @Role('admin', 'tenant', 'poc')
+  @ApiBearerAuth()
+  async getUserById(@Res() res: any, @Req() req: any) {
+    try {
+      const userId = parseInt(req.userId);
+      const account = await this.accountService.getAccountById(userId);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: account });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
+    }
+  }
+
   @Get('/poc')
   @Role('tenant')
   @ApiBearerAuth()

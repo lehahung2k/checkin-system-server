@@ -25,7 +25,7 @@ export class EventsManagerService {
 
   async getAllEvents(): Promise<EventResponseDto[]> {
     const events = await this.eventsMngRepo.find();
-    const eventsRes = await Promise.all(
+    return await Promise.all(
       events.map(async (event) => {
         let base64Image = '';
         if (event.eventImg)
@@ -36,7 +36,6 @@ export class EventsManagerService {
         });
       }),
     );
-    return eventsRes;
   }
 
   async getEventsByTenant(userId: number): Promise<EventResponseDto[]> {
@@ -48,7 +47,7 @@ export class EventsManagerService {
         .createQueryBuilder('EventsManager')
         .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
         .getMany();
-      const eventsRes = await Promise.all(
+      return await Promise.all(
         events.map(async (event) => {
           let base64Image = '';
           if (event.eventImg)
@@ -59,7 +58,6 @@ export class EventsManagerService {
           });
         }),
       );
-      return eventsRes;
     } catch (e) {
       console.log(e);
       throw new NotFoundException(EVENT_NOT_FOUND);
@@ -82,11 +80,10 @@ export class EventsManagerService {
       let base64Image = '';
       if (event.eventImg)
         base64Image = Buffer.from(event.eventImg).toString('utf8');
-      const eventRes = plainToInstance(EventResponseDto, {
+      return plainToInstance(EventResponseDto, {
         ...event,
         eventImg: base64Image,
       });
-      return eventRes;
     } catch (e) {
       console.log(e);
       throw new NotFoundException(EVENT_NOT_FOUND);

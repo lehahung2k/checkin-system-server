@@ -15,7 +15,7 @@ import { Role } from '../../auth/role.decorator';
 import { SUCCESS_RESPONSE } from 'src/utils/message.utils';
 import { GuestsDto } from '../dto/guests.dto';
 
-@Controller('guests')
+@Controller('api/guests')
 @ApiTags('Guests')
 @UseGuards(RoleGuard)
 export class GuestsController {
