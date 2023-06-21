@@ -38,10 +38,12 @@ export class PointsOfCheckinService {
       where: { userId: userId },
     });
     const username = user.username;
-    const userCheck = await this.accountsRepo.findOne({
-      where: { username: username },
-    });
-    if (userCheck) throw new BadRequestException(POC_EXISTED);
+    const pocCheck = await this.pointsOfCheckinRepo
+      .createQueryBuilder('poc')
+      .where('poc.username = :username', { username })
+      .andWhere('poc.eventCode = :eventCode', { eventCode: newPoint.eventCode })
+      .getOne();
+    if (pocCheck) throw new BadRequestException(POC_EXISTED);
     newPoint.username = username;
     const addPoint = plainToInstance(PointsOfCheckin, {
       ...newPoint,
