@@ -98,13 +98,30 @@ export class PointsOfCheckinController {
     }
   }
 
+  @Get('/poc/poc-view')
+  @Role('poc')
+  @ApiBearerAuth()
+  async getPocListByPoc(@Res() res, @Req() req) {
+    try {
+      const userId = parseInt(req.userId);
+      const poc = await this.pocService.getPocListByPoc(userId);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: poc });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: ERROR_RESPONSE, payload: null });
+    }
+  }
+
   @Get('/poc/details')
   @Role('poc')
   @ApiBearerAuth()
-  async getPocDetails(@Res() res: any, @Req() req: any): Promise<void> {
+  async getPocDetails(@Res() res: any, @Req() req: any, @Query('pintId') pointId: number): Promise<void> {
     try {
       const userId = parseInt(req.userId);
-      const poc = await this.pocService.getPocDetails(userId);
+      const poc = await this.pocService.getPocDetails(userId, pointId);
       res
         .status(HttpStatus.OK)
         .json({ message: SUCCESS_RESPONSE, payload: poc });

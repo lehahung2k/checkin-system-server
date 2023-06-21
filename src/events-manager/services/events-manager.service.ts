@@ -15,12 +15,14 @@ import { plainToInstance } from 'class-transformer';
 import { Tenants } from 'src/tenants/entities/tenants.entity';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { EventResponseDto } from '../dto/event-response.dto';
+import { TenantsRepository } from '../../tenants/repository/tenants.repository';
 
 @Injectable()
 export class EventsManagerService {
   constructor(
     private readonly eventsMngRepo: EventsManagerRepository,
     private readonly accountsRepo: AccountsRepository,
+    private readonly tenantsRepo: TenantsRepository,
   ) {}
 
   async getAllEvents(): Promise<EventResponseDto[]> {
@@ -62,6 +64,29 @@ export class EventsManagerService {
         .leftJoinAndSelect('EventsManager.tenantCode', 'tenantCode')
         .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
         .andWhere('EventsManager.eventId = :eventId', { eventId })
+        .getOne();
+      return await this.transformEvent(event);
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException(EVENT_NOT_FOUND);
+    }
+  }
+
+  async getEventDetailsByEventCode(
+    userId: number,
+    eventCode: string,
+  ): Promise<EventResponseDto> {
+    const account = await this.accountsRepo.findOne({
+      where: { userId },
+    });
+    if (!account) throw new NotFoundException(UN_RECOGNIZED_TENANT);
+    const tenantCode: string = account.tenantCode;
+    try {
+      const event = await this.eventsMngRepo
+        .createQueryBuilder('EventsManager')
+        .leftJoinAndSelect('EventsManager.tenantCode', 'tenantCode')
+        .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
+        .andWhere('EventsManager.eventCode = :eventCode', { eventCode })
         .getOne();
       return await this.transformEvent(event);
     } catch (e) {

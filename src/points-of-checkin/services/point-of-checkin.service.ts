@@ -66,13 +66,7 @@ export class PointsOfCheckinService {
     if (!listPointOfCheckin) throw new NotFoundException(POC_NOT_FOUND);
 
     return await Promise.all(
-      listPointOfCheckin.map((poc) =>
-        plainToInstance(PocResDto, {
-          ...poc,
-          eventCode: poc.eventCode.eventCode,
-          username: poc.username.username,
-        }),
-      ),
+      listPointOfCheckin.map((poc) => this.transformPocToPocResDto(poc)),
     );
   }
 
@@ -90,25 +84,43 @@ export class PointsOfCheckinService {
       .where('pointOfCheckin.username = :username', { username })
       .getOne();
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
-    return plainToInstance(PocResDto, {
-      ...poc,
-      eventCode: poc.eventCode.eventCode,
-      username: poc.username.username,
-    });
+    return this.transformPocToPocResDto(poc);
   }
 
-  async getPocDetails(userId: number): Promise<PocResDto> {
-    const pocAccounts = await this.accountsRepo.findOne({
+  async getPocListByPoc(userId: number): Promise<PocResDto[]> {
+    const pocAccount = await this.accountsRepo.findOne({
       where: { userId: userId },
     });
-    const username = pocAccounts.username;
+    const username = pocAccount.username;
+    const pocList = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
+      .leftJoinAndSelect('pointOfCheckin.username', 'username')
+      .where('pointOfCheckin.username = :username', { username })
+      .getMany();
+    if (!pocList) throw new NotFoundException(POC_NOT_FOUND);
+    return await Promise.all(
+      pocList.map(async (poc) => this.transformPocToPocResDto(poc)),
+    );
+  }
+
+  async getPocDetails(userId: number, pointId: number): Promise<PocResDto> {
+    const pocAccount = await this.accountsRepo.findOne({
+      where: { userId: userId },
+    });
+    const username = pocAccount.username;
     const poc = await this.pointsOfCheckinRepo
       .createQueryBuilder('pointOfCheckin')
       .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
       .leftJoinAndSelect('pointOfCheckin.username', 'username')
       .where('pointOfCheckin.username = :username', { username })
+      .andWhere('pointOfCheckin.pointId = :pointId', { pointId })
       .getOne();
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
+    return this.transformPocToPocResDto(poc);
+  }
+
+  private transformPocToPocResDto(poc: PointsOfCheckin): PocResDto {
     return plainToInstance(PocResDto, {
       ...poc,
       eventCode: poc.eventCode.eventCode,
