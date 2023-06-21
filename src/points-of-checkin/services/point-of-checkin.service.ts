@@ -11,6 +11,7 @@ import { AccountsRepository } from 'src/accounts/repository/accounts.repository'
 import { plainToInstance } from 'class-transformer';
 import { EVENT_NOT_FOUND, POC_NOT_FOUND } from 'src/utils/message.utils';
 import { AccountsService } from '../../accounts/services/accounts.service';
+import { PocResDto } from '../dto/poc-res.dto';
 
 @Injectable()
 export class PointsOfCheckinService {
@@ -49,25 +50,27 @@ export class PointsOfCheckinService {
     }
   }
 
-  async getPointsOfCheckinByUsername(
-    userId: number,
-  ): Promise<PointsOfCheckin[]> {
+  async getPointsOfCheckinByUsername(userId: number): Promise<PocResDto[]> {
     const pocAccounts = await this.accountsService.getAllPoc(userId);
     const usernames = pocAccounts.map((account) => account.username);
     // Lấy tất cả points of checkin có username trùng với username của list pocAccount (mỗi pocAccount có 1 username)
     const listPointOfCheckin = await this.pointsOfCheckinRepo
       .createQueryBuilder('pointOfCheckin')
+      .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
+      .leftJoinAndSelect('pointOfCheckin.username', 'username')
       .where('pointOfCheckin.username IN (:...usernames)', { usernames })
       .getMany();
     if (!listPointOfCheckin) throw new NotFoundException(POC_NOT_FOUND);
-    console.log(listPointOfCheckin);
-    return listPointOfCheckin;
+    return listPointOfCheckin.map((poc) => {
+      return plainToInstance(PocResDto, {
+        ...poc,
+        eventCode: poc.eventCode.eventCode,
+        username: poc.username.username,
+      });
+    });
   }
 
-  async getPocByUsername(
-    userId: number,
-    username: string,
-  ): Promise<PointsOfCheckin> {
+  async getPocByUsername(userId: number, username: string): Promise<PocResDto> {
     const pocAccount = await this.accountsService.getPocByUsername(
       userId,
       username,
@@ -76,9 +79,33 @@ export class PointsOfCheckinService {
     const usernameFind = pocAccount.username;
     const poc = await this.pointsOfCheckinRepo
       .createQueryBuilder('pointOfCheckin')
+      .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
+      .leftJoinAndSelect('pointOfCheckin.username', 'username')
       .where('pointOfCheckin.username = :usernameFind', { usernameFind })
       .getOne();
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
-    return poc;
+    return plainToInstance(PocResDto, {
+      ...poc,
+      eventCode: poc.eventCode.eventCode,
+      username: poc.username.username,
+    });
+  }
+  async getPocDetails(userId: number): Promise<PocResDto> {
+    const pocAccounts = await this.accountsRepo.findOne({
+      where: { userId: userId },
+    });
+    const username = pocAccounts.username;
+    const poc = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
+      .leftJoinAndSelect('pointOfCheckin.username', 'username')
+      .where('pointOfCheckin.username = :username', { username })
+      .getOne();
+    if (!poc) throw new NotFoundException(POC_NOT_FOUND);
+    return plainToInstance(PocResDto, {
+      ...poc,
+      eventCode: poc.eventCode.eventCode,
+      username: poc.username.username,
+    });
   }
 }

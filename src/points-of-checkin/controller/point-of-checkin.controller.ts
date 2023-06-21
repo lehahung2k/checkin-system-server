@@ -13,9 +13,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PointsOfCheckinService } from '../services/point-of-checkin.service';
 import {
   ERROR_RESPONSE,
-  EVENT_NOT_FOUND, POC_NOT_FOUND,
-  SUCCESS_RESPONSE
-} from "src/utils/message.utils";
+  EVENT_NOT_FOUND,
+  POC_NOT_FOUND,
+  SUCCESS_RESPONSE,
+} from 'src/utils/message.utils';
 import { Role } from 'src/auth/role.decorator';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { RoleGuard } from 'src/auth/role.guard';
@@ -87,6 +88,23 @@ export class PointsOfCheckinController {
     try {
       const userId = parseInt(req.userId);
       const poc = await this.pocService.getPocByUsername(userId, username);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: poc });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: ERROR_RESPONSE, payload: null });
+    }
+  }
+
+  @Get('/poc/details')
+  @Role('poc')
+  @ApiBearerAuth()
+  async getPocDetails(@Res() res: any, @Req() req: any): Promise<void> {
+    try {
+      const userId = parseInt(req.userId);
+      const poc = await this.pocService.getPocDetails(userId);
       res
         .status(HttpStatus.OK)
         .json({ message: SUCCESS_RESPONSE, payload: poc });
