@@ -1,10 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AccountsRepository } from '../repository/accounts.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountResDto } from '../dto/account-res.dto';
 import { Accounts } from '../entities/accounts.entity';
 import { Tenants } from '../../tenants/entities/tenants.entity';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AccountsService {
@@ -22,9 +21,8 @@ export class AccountsService {
       .createQueryBuilder('account')
       .where('account.userId = :userId', { userId })
       .getOne();
-    console.log(account);
     // change to accountResDto
-    return plainToInstance(AccountResDto, account);
+    return this.mapAccountToResponse(account);
   }
 
   // Tìm toàn bộ POC đã đăng ký với tenantCode được doanh nghiệp cung cấp
@@ -47,7 +45,7 @@ export class AccountsService {
       where: { username: username, tenantCode: tenant.tenantCode, role: 'poc' },
     });
     if (!poc) throw new NotFoundException();
-    return poc;
+    return this.mapAccountToResponse(poc);
   }
 
   async getAllAccountTenant(): Promise<AccountResDto[]> {
@@ -68,18 +66,22 @@ export class AccountsService {
     return account.tenants[0];
   }
 
+  mapAccountToResponse(account: Accounts): AccountResDto {
+    return {
+      userId: account.userId,
+      username: account.username,
+      fullName: account.fullName,
+      phoneNumber: account.phoneNumber,
+      email: account.email,
+      active: account.active,
+      role: account.role,
+      tenantCode: account.tenantCode,
+      companyName: account.companyName,
+      enabled: account.enabled,
+    };
+  }
+
   mappingResponse(accountRes: Accounts[]): AccountResDto[] {
-    return accountRes.map((res) => ({
-      userId: res.userId,
-      username: res.username,
-      fullName: res.fullName,
-      phoneNumber: res.phoneNumber,
-      email: res.email,
-      active: res.active,
-      role: res.role,
-      tenantCode: res.tenantCode,
-      companyName: res.companyName,
-      enabled: res.enabled,
-    }));
+    return accountRes.map((res) => this.mapAccountToResponse(res));
   }
 }
