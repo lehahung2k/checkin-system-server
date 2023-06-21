@@ -24,17 +24,9 @@ export class EventsManagerService {
   ) {}
 
   async getAllEvents(): Promise<EventResponseDto[]> {
-    const events = await this.eventsMngRepo.find();
+    const events = await this.eventsMngRepo.find({ relations: ['tenantCode'] });
     return await Promise.all(
-      events.map(async (event) => {
-        let base64Image = '';
-        if (event.eventImg)
-          base64Image = Buffer.from(event.eventImg).toString('utf8');
-        return plainToInstance(EventResponseDto, {
-          ...event,
-          eventImg: base64Image,
-        });
-      }),
+      events.map(async (event) => this.transformEvent(event)),
     );
   }
 
@@ -45,18 +37,11 @@ export class EventsManagerService {
     try {
       const events = await this.eventsMngRepo
         .createQueryBuilder('EventsManager')
+        .leftJoinAndSelect('EventsManager.tenantCode', 'tenantCode')
         .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
         .getMany();
       return await Promise.all(
-        events.map(async (event) => {
-          let base64Image = '';
-          if (event.eventImg)
-            base64Image = Buffer.from(event.eventImg).toString('utf8');
-          return plainToInstance(EventResponseDto, {
-            ...event,
-            eventImg: base64Image,
-          });
-        }),
+        events.map(async (event) => this.transformEvent(event)),
       );
     } catch (e) {
       console.log(e);
@@ -74,16 +59,11 @@ export class EventsManagerService {
     try {
       const event = await this.eventsMngRepo
         .createQueryBuilder('EventsManager')
+        .leftJoinAndSelect('EventsManager.tenantCode', 'tenantCode')
         .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
         .andWhere('EventsManager.eventId = :eventId', { eventId })
         .getOne();
-      let base64Image = '';
-      if (event.eventImg)
-        base64Image = Buffer.from(event.eventImg).toString('utf8');
-      return plainToInstance(EventResponseDto, {
-        ...event,
-        eventImg: base64Image,
-      });
+      return await this.transformEvent(event);
     } catch (e) {
       console.log(e);
       throw new NotFoundException(EVENT_NOT_FOUND);
@@ -119,5 +99,16 @@ export class EventsManagerService {
       .where('Accounts.userId = :userId', { userId })
       .getOne();
     return account.tenants[0];
+  }
+
+  private transformEvent(event: EventsManager): EventResponseDto {
+    const base64Image = event.eventImg
+      ? Buffer.from(event.eventImg).toString('utf8')
+      : '';
+    return plainToInstance(EventResponseDto, {
+      ...event,
+      tenantCode: event.tenantCode?.tenantCode,
+      eventImg: base64Image,
+    });
   }
 }
