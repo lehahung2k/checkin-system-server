@@ -5,6 +5,7 @@ import { EventsManager } from './entities/events-manager.entity';
 import { EventsManagerService } from './services/events-manager.service';
 import { EventsManagerRepository } from './repository/events-manager.repository';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
+import { TenantsRepository } from '../tenants/repository/tenants.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([EventsManager])],
@@ -13,6 +14,7 @@ import { AccountsRepository } from 'src/accounts/repository/accounts.repository'
     EventsManagerService,
     EventsManagerRepository,
     AccountsRepository,
+    TenantsRepository,
   ],
   exports: [EventsManagerService],
 })

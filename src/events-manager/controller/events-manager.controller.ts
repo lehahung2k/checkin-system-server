@@ -70,7 +70,7 @@ export class EventsManagerController {
   }
 
   @Get('/events/view')
-  @Role('tenant', 'poc')
+  @Role('tenant')
   @ApiBearerAuth()
   async getEventDetails(
     @Res() res: any,
@@ -79,6 +79,24 @@ export class EventsManagerController {
   ): Promise<void> {
     const userId = parseInt(req.userId);
     const event = await this.eventService.getEventDetails(userId, eventId);
+    res
+      .status(HttpStatus.OK)
+      .json({ message: SUCCESS_RESPONSE, payload: event });
+  }
+
+  @Get('/events/poc-view')
+  @Role('poc')
+  @ApiBearerAuth()
+  async getEventDetailsForPoc(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('eventCode') eventCode: string,
+  ): Promise<void> {
+    const userId = parseInt(req.userId);
+    const event = await this.eventService.getEventDetailsByEventCode(
+      userId,
+      eventCode,
+    );
     res
       .status(HttpStatus.OK)
       .json({ message: SUCCESS_RESPONSE, payload: event });
