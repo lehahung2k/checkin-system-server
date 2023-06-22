@@ -9,20 +9,21 @@ import { EventsManager } from '../entities/events-manager.entity';
 import {
   BAD_REQUEST_RES,
   EVENT_NOT_FOUND,
+  POC_NOT_FOUND,
   UN_RECOGNIZED_TENANT,
 } from 'src/utils/message.utils';
 import { plainToInstance } from 'class-transformer';
 import { Tenants } from 'src/tenants/entities/tenants.entity';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { EventResponseDto } from '../dto/event-response.dto';
-import { TenantsRepository } from '../../tenants/repository/tenants.repository';
+import { PointsOfCheckinService } from '../../points-of-checkin/services/point-of-checkin.service';
 
 @Injectable()
 export class EventsManagerService {
   constructor(
     private readonly eventsMngRepo: EventsManagerRepository,
     private readonly accountsRepo: AccountsRepository,
-    private readonly tenantsRepo: TenantsRepository,
+    private readonly pocService: PointsOfCheckinService,
   ) {}
 
   async getAllEvents(): Promise<EventResponseDto[]> {
@@ -118,6 +119,20 @@ export class EventsManagerService {
       console.log(error);
       throw new BadRequestException(BAD_REQUEST_RES);
     }
+  }
+  async getEventByPointCode(
+    userId: number,
+    pointCode: string,
+  ): Promise<EventResponseDto> {
+    const poc = await this.pocService.getPocDetails(userId, pointCode);
+    if (!poc) throw new NotFoundException(POC_NOT_FOUND);
+    const event = await this.eventsMngRepo
+      .createQueryBuilder('EventsManager')
+      .where('EventsManager.eventCode = :eventCode', {
+        eventCode: poc.eventCode,
+      })
+      .getOne();
+    return this.transformEvent(event);
   }
 
   // Tìm kiếm tenant theo userId dựa vào quan hệ nhiều nhiều của bảng accounts và tenants

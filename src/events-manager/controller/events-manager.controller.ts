@@ -101,4 +101,27 @@ export class EventsManagerController {
       .status(HttpStatus.OK)
       .json({ message: SUCCESS_RESPONSE, payload: event });
   }
+
+  @Get('/events/poc-code')
+  @Role('poc')
+  @ApiBearerAuth()
+  async getEventByPointCode(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('pointCode') pointCode: string,
+  ) {
+    const userId = parseInt(req.userId);
+    try {
+      const event = await this.eventService.getEventByPointCode(
+        userId,
+        pointCode,
+      );
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: event });
+    } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.NOT_FOUND).json({ message: error.message });
+    }
+  }
 }

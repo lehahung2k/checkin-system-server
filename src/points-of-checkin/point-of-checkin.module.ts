@@ -18,6 +18,6 @@ import { AccountsService } from '../accounts/services/accounts.service';
     AccountsRepository,
     AccountsService,
   ],
-  exports: [PointsOfCheckinRepository],
+  exports: [PointsOfCheckinRepository, PointsOfCheckinService],
 })
 export class PointsOfCheckinModule {}

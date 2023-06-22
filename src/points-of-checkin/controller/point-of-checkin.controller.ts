@@ -118,17 +118,18 @@ export class PointsOfCheckinController {
   @Get('/poc/details')
   @Role('poc')
   @ApiBearerAuth()
-  async getPocDetails(@Res() res: any, @Req() req: any, @Query('pintId') pointId: number): Promise<void> {
+  async getPocDetails(@Res() res: any, @Req() req: any, @Query('pointCode') pointCode: string): Promise<void> {
     try {
       const userId = parseInt(req.userId);
-      const poc = await this.pocService.getPocDetails(userId, pointId);
+      const poc = await this.pocService.getPocDetails(userId, pointCode);
       res
         .status(HttpStatus.OK)
         .json({ message: SUCCESS_RESPONSE, payload: poc });
     } catch (error) {
+      console.log(error);
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: ERROR_RESPONSE, payload: null });
+        .json({ message: error.message, payload: null });
     }
   }
 }
