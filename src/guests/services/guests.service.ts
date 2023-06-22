@@ -11,7 +11,7 @@ export class GuestsService {
 
   async getAllGuests(): Promise<GuestResponseDto[]> {
     const guests = await this.guestsRepo.find();
-    const guestsDto = await Promise.all(
+    return await Promise.all(
       guests.map(async (guest) => {
         const frontImg = Buffer.from(guest.frontImg).toString('utf8');
         const backImg = Buffer.from(guest.backImg).toString('utf8');
@@ -22,7 +22,6 @@ export class GuestsService {
         });
       }),
     );
-    return guestsDto;
   }
 
   async getGuestById(guestId: number): Promise<GuestResponseDto> {

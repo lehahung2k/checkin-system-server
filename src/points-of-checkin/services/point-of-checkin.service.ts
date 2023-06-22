@@ -9,7 +9,11 @@ import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { EventsManagerRepository } from 'src/events-manager/repository/events-manager.repository';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { plainToInstance } from 'class-transformer';
-import { EVENT_NOT_FOUND, POC_EXISTED, POC_NOT_FOUND } from "src/utils/message.utils";
+import {
+  EVENT_NOT_FOUND,
+  POC_EXISTED,
+  POC_NOT_FOUND,
+} from 'src/utils/message.utils';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { PocResDto } from '../dto/poc-res.dto';
 
@@ -111,7 +115,7 @@ export class PointsOfCheckinService {
     );
   }
 
-  async getPocDetails(userId: number, pointId: number): Promise<PocResDto> {
+  async getPocDetails(userId: number, pointCode: string): Promise<PocResDto> {
     const pocAccount = await this.accountsRepo.findOne({
       where: { userId: userId },
     });
@@ -121,7 +125,7 @@ export class PointsOfCheckinService {
       .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
       .leftJoinAndSelect('pointOfCheckin.username', 'username')
       .where('pointOfCheckin.username = :username', { username })
-      .andWhere('pointOfCheckin.pointId = :pointId', { pointId })
+      .andWhere('pointOfCheckin.pointCode = :pointCode', { pointCode })
       .getOne();
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
     return this.transformPocToPocResDto(poc);
