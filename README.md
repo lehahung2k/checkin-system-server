@@ -29,7 +29,7 @@
 
 # ĐỒ ÁN TỐT NGHIỆP KỸ SƯ KTMT 20222
 
-## XÂY DỰNG HỆ THỐNG CHECK-IN TẠI CHỖ - GIAI ĐOẠN 2 - SERVER SIDE
+## XÂY DỰNG HỆ THỐNG CHECK-IN ĐA ĐIỂM - GIAI ĐOẠN 2 - SERVER SIDE
 
 - Hà Nội, 04/2023
 
@@ -65,3 +65,6 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+## Sản phẩm
+
+- [Hệ thống quản lý check-in](https://dangky.app)

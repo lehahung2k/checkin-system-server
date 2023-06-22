@@ -103,8 +103,12 @@ export class EventsManagerService {
     const tenant = await this.findTenantByUserId(userId);
     if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
     newEvent.tenantCode = tenant.tenantCode;
+    const startTime = new Date(newEvent.startTime);
+    const endTime = new Date(newEvent.endTime);
     const addEvent = plainToInstance(EventsManager, {
       ...newEvent,
+      startTime,
+      endTime,
       enabled: true,
     });
 

@@ -9,7 +9,7 @@ import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { EventsManagerRepository } from 'src/events-manager/repository/events-manager.repository';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { plainToInstance } from 'class-transformer';
-import { EVENT_NOT_FOUND, POC_NOT_FOUND } from 'src/utils/message.utils';
+import { EVENT_NOT_FOUND, POC_EXISTED, POC_NOT_FOUND } from "src/utils/message.utils";
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { PocResDto } from '../dto/poc-res.dto';
 
@@ -37,7 +37,14 @@ export class PointsOfCheckinService {
     const user = await this.accountsRepo.findOne({
       where: { userId: userId },
     });
-    newPoint.username = user.username;
+    const username = user.username;
+    const pocCheck = await this.pointsOfCheckinRepo
+      .createQueryBuilder('poc')
+      .where('poc.username = :username', { username })
+      .andWhere('poc.eventCode = :eventCode', { eventCode: newPoint.eventCode })
+      .getOne();
+    if (pocCheck) throw new BadRequestException(POC_EXISTED);
+    newPoint.username = username;
     const addPoint = plainToInstance(PointsOfCheckin, {
       ...newPoint,
       enabled: true,

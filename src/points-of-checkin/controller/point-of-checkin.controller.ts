@@ -56,7 +56,7 @@ export class PointsOfCheckinController {
         .json({ message: SUCCESS_RESPONSE, payload: newPointData });
     } catch (error) {
       console.log(error);
-      res.status(HttpStatus.BAD_REQUEST).json({ message: EVENT_NOT_FOUND });
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
     }
   }
 

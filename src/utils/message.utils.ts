@@ -15,3 +15,4 @@ export const ADD_SUCCESS = 'Thêm dữ liệu thành công!';
 export const TENANT_NOT_FOUND = 'Không tìm thấy doanh nghiệp';
 export const EVENT_NOT_FOUND = 'Sự kiện đã kết thúc hoặc không tồn tại!';
 export const POC_NOT_FOUND = 'Không tìm thấy POC';
+export const POC_EXISTED = 'Bạn đã tham gia sự kiện này rồi!';
