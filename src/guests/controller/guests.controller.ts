@@ -31,7 +31,7 @@ export class GuestsController {
       .json({ message: SUCCESS_RESPONSE, payload: guests });
   }
 
-  @Post('event/add-guest')
+  @Post('event/checkin')
   @Role('poc')
   @ApiBearerAuth()
   async addGuest(@Body() newGuest: GuestsDto, @Res() res) {
