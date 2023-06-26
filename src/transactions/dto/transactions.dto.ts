@@ -21,11 +21,9 @@ export class TransactionsDto {
   @ApiPropertyOptional()
   createdAt: Date;
 
-  @IsNotEmpty()
   @ApiPropertyOptional()
   checkinImg1: Buffer;
 
-  @IsNotEmpty()
   @ApiPropertyOptional()
   checkinImg2: Buffer;
 }

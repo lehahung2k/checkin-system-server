@@ -12,11 +12,9 @@ export class GuestsDto {
   @ApiPropertyOptional()
   guestDescription: string;
 
-  @IsNotEmpty()
   @ApiPropertyOptional()
   frontImg: Buffer;
 
-  @IsNotEmpty()
   @ApiPropertyOptional()
   backImg: Buffer;
 
@@ -24,4 +22,9 @@ export class GuestsDto {
   @IsString()
   @ApiPropertyOptional()
   identityType: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiPropertyOptional()
+  pointCode: string;
 }

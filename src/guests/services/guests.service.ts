@@ -2,31 +2,33 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { GuestsRepository } from '../repository/guests.repository';
 import { GuestsDto } from '../dto/guests.dto';
 import { GuestResponseDto } from '../dto/guest-response.dto';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { Guests } from '../entities/guests.entity';
+import { TransactionsDto } from '../../transactions/dto/transactions.dto';
+import { TransactionsService } from '../../transactions/services/transactions.service';
+import { Promise } from 'bluebird';
 
 @Injectable()
 export class GuestsService {
-  constructor(private readonly guestsRepo: GuestsRepository) {}
+  constructor(
+    private readonly guestsRepo: GuestsRepository,
+    private readonly transService: TransactionsService,
+  ) {}
 
   async getAllGuests(): Promise<GuestResponseDto[]> {
     const guests = await this.guestsRepo.find();
-    return await Promise.all(
-      guests.map(async (guest) => {
-        const frontImg = Buffer.from(guest.frontImg).toString('utf8');
-        const backImg = Buffer.from(guest.backImg).toString('utf8');
-        return plainToInstance(GuestResponseDto, {
-          ...guest,
-          frontImg: frontImg,
-          backImg: backImg,
-        });
+    return guests.map((guest) =>
+      plainToClass(GuestResponseDto, {
+        ...guest,
+        frontImg: guest.frontImg.toString('utf8'),
+        backImg: guest.backImg.toString('utf8'),
       }),
     );
   }
 
-  async getGuestById(guestId: number): Promise<GuestResponseDto> {
+  async getGuestByCode(guestCode: string): Promise<GuestResponseDto> {
     const guest = await this.guestsRepo.findOne({
-      where: { guestId: guestId },
+      where: { guestCode: guestCode },
     });
     const frontImg = Buffer.from(guest.frontImg).toString('utf8');
     const backImg = Buffer.from(guest.backImg).toString('utf8');
@@ -37,16 +39,56 @@ export class GuestsService {
     });
   }
 
+  async getAllGuestsByPointCode(
+    pointCode: string,
+  ): Promise<GuestResponseDto[]> {
+    const listTransactions = await this.transService.getAllByPointCode(
+      pointCode,
+    );
+
+    const guestCodes = listTransactions.map(
+      (transaction) => transaction.guestCode,
+    );
+
+    const listGuests = await Promise.map(
+      guestCodes,
+      async (guestCode) => {
+        const guest = await this.guestsRepo
+          .createQueryBuilder('guests')
+          .where('guests.guestCode = :guestCode', { guestCode: guestCode })
+          .getOne();
+        return plainToClass(GuestResponseDto, {
+          ...guest,
+          frontImg: guest.frontImg.toString('utf8'),
+          backImg: guest.backImg.toString('utf8'),
+        });
+      },
+      { concurrency: 10 },
+    );
+
+    return listGuests;
+  }
+
   async createGuest(newGuest: GuestsDto): Promise<Guests> {
     try {
       const addGuest = plainToInstance(Guests, {
         ...newGuest,
         enabled: true,
       });
-      return await this.guestsRepo.save(addGuest);
+      const saveGuest = await this.guestsRepo.save(addGuest);
+      const transactionDto: TransactionsDto = {
+        guestCode: newGuest.guestCode,
+        note: newGuest.guestDescription,
+        createdAt: new Date(),
+        pointCode: newGuest.pointCode,
+        checkinImg1: newGuest.frontImg,
+        checkinImg2: newGuest.backImg,
+      };
+      await this.transService.newTransaction(transactionDto);
+      return saveGuest;
     } catch (error) {
       console.log(error);
-      throw new BadRequestException(error);
+      throw new BadRequestException(error.message);
     }
   }
 }

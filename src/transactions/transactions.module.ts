@@ -9,5 +9,6 @@ import { TransactionsRepository } from './repository/transactions.repsitory';
   imports: [TypeOrmModule.forFeature([Transactions])],
   providers: [TransactionsService, TransactionsRepository],
   controllers: [TransactionsController],
+  exports: [TransactionsRepository, TransactionsService],
 })
 export class TransactionsModule {}
