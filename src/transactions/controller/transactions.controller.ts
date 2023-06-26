@@ -11,7 +11,7 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Get('')
-  @Role('admin', 'tenant', 'poc')
+  @Role('admin')
   @ApiBearerAuth()
   async getAllTransactions() {
     return this.transactionsService.getAllTransactions();

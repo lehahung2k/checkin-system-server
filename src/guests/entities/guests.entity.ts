@@ -11,10 +11,10 @@ export class Guests {
   @Column({ name: 'guestDescription', type: 'text' })
   guestDescription: string;
 
-  @Column({ name: 'frontImg', type: 'longblob' })
+  @Column({ name: 'frontImg', type: 'longblob', nullable: true })
   frontImg: Buffer;
 
-  @Column({ name: 'backImg', type: 'longblob' })
+  @Column({ name: 'backImg', type: 'longblob', nullable: true })
   backImg: Buffer;
 
   @Column({ name: 'identityType', nullable: false })
