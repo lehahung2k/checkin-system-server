@@ -13,7 +13,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PointsOfCheckinService } from '../services/point-of-checkin.service';
 import {
   ERROR_RESPONSE,
-  EVENT_NOT_FOUND,
   POC_NOT_FOUND,
   SUCCESS_RESPONSE,
 } from 'src/utils/message.utils';
@@ -98,7 +97,7 @@ export class PointsOfCheckinController {
     }
   }
 
-  @Get('/poc/poc-view')
+  @Get('/poc/list-poc')
   @Role('poc')
   @ApiBearerAuth()
   async getPocListByPoc(@Res() res, @Req() req) {
@@ -118,7 +117,11 @@ export class PointsOfCheckinController {
   @Get('/poc/details')
   @Role('poc')
   @ApiBearerAuth()
-  async getPocDetails(@Res() res: any, @Req() req: any, @Query('pointCode') pointCode: string): Promise<void> {
+  async getPocDetails(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('pointCode') pointCode: string,
+  ): Promise<void> {
     try {
       const userId = parseInt(req.userId);
       const poc = await this.pocService.getPocDetails(userId, pointCode);
