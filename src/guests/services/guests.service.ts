@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GuestsRepository } from '../repository/guests.repository';
 import { GuestsDto } from '../dto/guests.dto';
 import { GuestResponseDto } from '../dto/guest-response.dto';
@@ -7,6 +11,7 @@ import { Guests } from '../entities/guests.entity';
 import { TransactionsDto } from '../../transactions/dto/transactions.dto';
 import { TransactionsService } from '../../transactions/services/transactions.service';
 import { Promise } from 'bluebird';
+import { GUESTS_NOT_FOUND } from '../../utils/message.utils';
 
 @Injectable()
 export class GuestsService {
@@ -46,11 +51,14 @@ export class GuestsService {
       pointCode,
     );
 
+    if (listTransactions.length === 0)
+      throw new NotFoundException(GUESTS_NOT_FOUND);
+
     const guestCodes = listTransactions.map(
       (transaction) => transaction.guestCode,
     );
 
-    const listGuests = await Promise.map(
+    return await Promise.map(
       guestCodes,
       async (guestCode) => {
         const guest = await this.guestsRepo
@@ -65,8 +73,6 @@ export class GuestsService {
       },
       { concurrency: 10 },
     );
-
-    return listGuests;
   }
 
   async createGuest(newGuest: GuestsDto): Promise<Guests> {

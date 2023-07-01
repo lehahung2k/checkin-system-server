@@ -48,7 +48,7 @@ export class GuestsController {
   @Get('event/details')
   @Role('tenant', 'poc')
   @ApiBearerAuth()
-  async getGuestById(@Res() res, @Query('guestCode') guestCode: string) {
+  async getGuestByGuestCode(@Res() res, @Query('guestCode') guestCode: string) {
     const guest = await this.guestsService.getGuestByCode(guestCode);
     res
       .status(HttpStatus.OK)
@@ -66,9 +66,11 @@ export class GuestsController {
       const guests = await this.guestsService.getAllGuestsByPointCode(
         pointCode,
       );
-      res
-        .status(HttpStatus.OK)
-        .json({ message: SUCCESS_RESPONSE, payload: guests });
+      res.status(HttpStatus.OK).json({
+        message: SUCCESS_RESPONSE,
+        count: guests.length,
+        payload: guests,
+      });
     } catch (error) {
       res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
     }
