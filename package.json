@@ -1,8 +1,8 @@
 {
   "name": "checkin-system-server",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Check-in system",
+  "author": "HungLH",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -28,6 +28,7 @@
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/typeorm": "^9.0.1",
     "bcrypt": "^5.1.0",
+    "bluebird": "^3.7.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",

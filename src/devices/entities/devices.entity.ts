@@ -1,5 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
-import { PointsOfCheckin } from '../point-of-checkin/entities/point-of-checkin.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
+import { PointsOfCheckin } from '../../points-of-checkin/entities/points-of-checkin.entity';
 
 @Entity({ name: 'Devices' })
 export class Devices {
@@ -9,7 +15,11 @@ export class Devices {
   @Column({ name: 'deviceName', nullable: false })
   deviceName: string;
 
-  @ManyToOne(() => PointsOfCheckin, (pointOfCheckin) => pointOfCheckin.devices)
+  @ManyToOne(
+    () => PointsOfCheckin,
+    (pointsOfCheckin) => pointsOfCheckin.devices,
+    { nullable: false },
+  )
   @JoinColumn({ name: 'pointCode', referencedColumnName: 'pointCode' })
   pointCode: PointsOfCheckin;
 

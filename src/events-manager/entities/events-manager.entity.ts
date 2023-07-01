@@ -1,4 +1,4 @@
-import { PointsOfCheckin } from 'src/point-of-checkin/entities/point-of-checkin.entity';
+import { PointsOfCheckin } from 'src/points-of-checkin/entities/points-of-checkin.entity';
 import {
   Column,
   Entity,
@@ -20,7 +20,9 @@ export class EventsManager {
   @Column({ name: 'eventName' })
   eventName: string;
 
-  @ManyToOne(() => Tenants, (tenants) => tenants.eventsManager)
+  @ManyToOne(() => Tenants, (tenants) => tenants.eventsManager, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'tenantCode', referencedColumnName: 'tenantCode' })
   tenantCode: Tenants;
 
@@ -43,5 +45,5 @@ export class EventsManager {
     () => PointsOfCheckin,
     (pointsOfCheckin) => pointsOfCheckin.eventCode,
   )
-  pointOfCheckin: Promise<PointsOfCheckin[]>;
+  pointsOfCheckin: Promise<PointsOfCheckin[]>;
 }

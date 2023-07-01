@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TenantsModule } from './tenants/tenants.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { EventsManagerModule } from './events-manager/events-manager.module';
-import { PointOfCheckinModule } from './point-of-checkin/point-of-checkin.module';
+import { PointsOfCheckinModule } from './points-of-checkin/point-of-checkin.module';
 import { GuestsModule } from './guests/guests.module';
 import { AuthModule } from './auth/auth.module';
 import { databaseConfig } from './config/database.config';
@@ -17,7 +17,7 @@ import { DevicesModule } from './devices/devices.module';
     TenantsModule,
     AccountsModule,
     EventsManagerModule,
-    PointOfCheckinModule,
+    PointsOfCheckinModule,
     GuestsModule,
     AuthModule,
     TransactionsModule,

@@ -4,14 +4,14 @@ import { RoleGuard } from 'src/auth/role.guard';
 import { Role } from 'src/auth/role.decorator';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
-@Controller('transactions')
-@ApiTags('transactions')
+@Controller('api/transactions')
+@ApiTags('Transactions')
 @UseGuards(RoleGuard)
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Get('')
-  @Role('admin', 'tenant', 'poc')
+  @Role('admin')
   @ApiBearerAuth()
   async getAllTransactions() {
     return this.transactionsService.getAllTransactions();

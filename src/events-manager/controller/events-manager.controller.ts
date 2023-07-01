@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -31,7 +32,7 @@ export class EventsManagerController {
   @ApiBearerAuth()
   async getEvents(@Res() res: any): Promise<void> {
     const allEvents = await this.eventService.getAllEvents();
-    return await res
+    res
       .status(HttpStatus.OK)
       .json({ message: SUCCESS_RESPONSE, payload: allEvents });
   }
@@ -54,6 +55,73 @@ export class EventsManagerController {
       let message = BAD_REQUEST_RES;
       if (error.message == UN_RECOGNIZED_TENANT) message = UN_RECOGNIZED_TENANT;
       res.status(HttpStatus.BAD_REQUEST).json({ message });
+    }
+  }
+
+  @Get('/events')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async getEventsByTenant(@Res() res: any, @Req() req: any): Promise<void> {
+    const userId = parseInt(req.userId);
+    const events = await this.eventService.getEventsByTenant(userId);
+    res
+      .status(HttpStatus.OK)
+      .json({ message: SUCCESS_RESPONSE, payload: events });
+  }
+
+  @Get('/events/view')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async getEventDetails(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('eventId') eventId: number,
+  ): Promise<void> {
+    const userId = parseInt(req.userId);
+    const event = await this.eventService.getEventDetails(userId, eventId);
+    res
+      .status(HttpStatus.OK)
+      .json({ message: SUCCESS_RESPONSE, payload: event });
+  }
+
+  @Get('/events/poc-view')
+  @Role('poc')
+  @ApiBearerAuth()
+  async getEventDetailsForPoc(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('eventCode') eventCode: string,
+  ): Promise<void> {
+    const userId = parseInt(req.userId);
+    const event = await this.eventService.getEventDetailsByEventCode(
+      userId,
+      eventCode,
+    );
+    res
+      .status(HttpStatus.OK)
+      .json({ message: SUCCESS_RESPONSE, payload: event });
+  }
+
+  @Get('/events/poc-code')
+  @Role('poc')
+  @ApiBearerAuth()
+  async getEventByPointCode(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('pointCode') pointCode: string,
+  ) {
+    const userId = parseInt(req.userId);
+    try {
+      const event = await this.eventService.getEventByPointCode(
+        userId,
+        pointCode,
+      );
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: event });
+    } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.NOT_FOUND).json({ message: error.message });
     }
   }
 }

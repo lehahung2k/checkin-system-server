@@ -1,29 +1,32 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 
-export class TransactionsDto {
-  @IsNotEmpty()
-  @IsString()
+export class TransResponseDto {
   @ApiPropertyOptional()
+  @Expose()
+  tranId: number;
+
+  @ApiPropertyOptional()
+  @Expose()
   pointCode: string;
 
-  @IsNotEmpty()
-  @IsString()
   @ApiPropertyOptional()
+  @Expose()
   guestCode: string;
 
-  @IsNotEmpty()
-  @IsString()
   @ApiPropertyOptional()
+  @Expose()
   note: string;
 
-  @IsNotEmpty()
   @ApiPropertyOptional()
+  @Expose()
   createdAt: Date;
 
   @ApiPropertyOptional()
-  checkinImg1: Buffer;
+  @Expose()
+  checkinImg1: string;
 
   @ApiPropertyOptional()
-  checkinImg2: Buffer;
+  @Expose()
+  checkinImg2: string;
 }
