@@ -5,7 +5,7 @@ export class Guests {
   @PrimaryGeneratedColumn({ name: 'guestId', type: 'bigint' })
   guestId: number;
 
-  @Column({ name: 'guestCode', length: 255, unique: true })
+  @Column({ name: 'guestCode', length: 255 })
   guestCode: string;
 
   @Column({ name: 'guestDescription', type: 'text' })
