@@ -17,3 +17,4 @@ export const EVENT_NOT_FOUND = 'Sự kiện đã kết thúc hoặc không tồn
 export const POC_NOT_FOUND = 'Không tìm thấy quầy check-in nào';
 export const POC_EXISTED = 'Bạn đã tham gia sự kiện này rồi!';
 export const GUESTS_NOT_FOUND = 'Không tìm thấy khách check-in nào';
+export const GUEST_EXISTED = 'Khách đã check-in quầy này rồi!';

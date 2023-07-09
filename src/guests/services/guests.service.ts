@@ -11,12 +11,14 @@ import { Guests } from '../entities/guests.entity';
 import { TransactionsDto } from '../../transactions/dto/transactions.dto';
 import { TransactionsService } from '../../transactions/services/transactions.service';
 import { Promise } from 'bluebird';
-import { GUESTS_NOT_FOUND } from '../../utils/message.utils';
+import { GUESTS_NOT_FOUND, GUEST_EXISTED } from '../../utils/message.utils';
+import { TransactionsRepository } from 'src/transactions/repository/transactions.repsitory';
 
 @Injectable()
 export class GuestsService {
   constructor(
     private readonly guestsRepo: GuestsRepository,
+    private readonly transRepo: TransactionsRepository,
     private readonly transService: TransactionsService,
   ) {}
 
@@ -75,13 +77,30 @@ export class GuestsService {
     );
   }
 
+  // check-in
   async createGuest(newGuest: GuestsDto): Promise<Guests> {
     try {
       const addGuest = plainToInstance(Guests, {
         ...newGuest,
         enabled: true,
       });
+
+      const existedGuest = await this.transRepo.findOne({
+        where: { guestCode: newGuest.guestCode },
+        relations: ['pointCode'],
+      });
+
+      if (
+        existedGuest &&
+        existedGuest.pointCode &&
+        existedGuest.pointCode.pointCode === newGuest.pointCode &&
+        existedGuest.guestCode === newGuest.guestCode
+      ) {
+        throw new BadRequestException(GUEST_EXISTED);
+      }
+
       const saveGuest = await this.guestsRepo.save(addGuest);
+
       const transactionDto: TransactionsDto = {
         guestCode: newGuest.guestCode,
         note: newGuest.guestDescription,
@@ -90,7 +109,9 @@ export class GuestsService {
         checkinImg1: newGuest.frontImg,
         checkinImg2: newGuest.backImg,
       };
+
       await this.transService.newTransaction(transactionDto);
+
       return saveGuest;
     } catch (error) {
       console.log(error);
