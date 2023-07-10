@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { INVALID_EMAIL } from '../../utils/message.utils';
 
 export class AddTenantDto {
   @ApiPropertyOptional()
@@ -33,6 +34,6 @@ export class AddTenantDto {
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
-  @IsEmail({}, { message: 'Invalid email address' })
+  @IsEmail({}, { message: INVALID_EMAIL })
   contactEmail: string;
 }

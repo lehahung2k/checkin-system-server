@@ -73,7 +73,6 @@ export class AccountsService {
       .getOne();
     if (!account) throw new NotFoundException();
     Object.assign(account, updateProfileDto);
-    console.log(account);
     await this.usersRepository.save(account);
   }
 

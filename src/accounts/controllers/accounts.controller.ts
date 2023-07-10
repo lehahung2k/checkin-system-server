@@ -18,7 +18,7 @@ import {
   CHANGE_PASSWORD_SUCCESS,
   ERROR_RESPONSE,
   SUCCESS_RESPONSE,
-  UPDATE_ACCOUNT_SUCCESS,
+  UPDATE_INFO_SUCCESS,
   USER_NOT_FOUND_MESSAGE,
 } from '../../utils/message.utils';
 import { ChangePasswordDto } from '../dto/change-password.dto';
@@ -128,7 +128,7 @@ export class AccountsController {
     try {
       const userId = parseInt(req.userId);
       await this.accountService.updateProfile(userId, updateProfileDto);
-      res.status(HttpStatus.OK).json({ message: UPDATE_ACCOUNT_SUCCESS });
+      res.status(HttpStatus.OK).json({ message: UPDATE_INFO_SUCCESS });
     } catch (error) {
       console.log(error);
       res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });

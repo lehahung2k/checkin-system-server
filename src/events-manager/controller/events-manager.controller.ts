@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Patch,
   Post,
   Query,
   Req,
@@ -16,10 +17,12 @@ import {
   BAD_REQUEST_RES,
   SUCCESS_RESPONSE,
   UN_RECOGNIZED_TENANT,
+  UPDATE_INFO_SUCCESS,
 } from 'src/utils/message.utils';
 import { EventsManagerService } from '../services/events-manager.service';
 import { Role } from 'src/auth/role.decorator';
 import { NewEventDto } from '../dto/new-event.dto';
+import { UpdateEventDto } from '../dto/update-event.dto';
 
 @ApiTags('Events Manager')
 @Controller('api/events-manager')
@@ -38,7 +41,7 @@ export class EventsManagerController {
   }
 
   @Post('/add-event')
-  @Role('admin', 'tenant')
+  @Role('tenant')
   @ApiBearerAuth()
   async addEvent(@Body() newEvent: NewEventDto, @Res() res, @Req() req) {
     try {
@@ -122,6 +125,31 @@ export class EventsManagerController {
     } catch (error) {
       console.log(error);
       res.status(HttpStatus.NOT_FOUND).json({ message: error.message });
+    }
+  }
+
+  @Patch('/events/update')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async updateEvent(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('eventId') eventId: number,
+    @Body() updateEvent: UpdateEventDto,
+  ): Promise<void> {
+    try {
+      const userId = parseInt(req.userId);
+      const updatedEvent = await this.eventService.updateEvent(
+        userId,
+        eventId,
+        updateEvent,
+      );
+      res
+        .status(HttpStatus.OK)
+        .json({ message: UPDATE_INFO_SUCCESS, payload: updatedEvent });
+    } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
     }
   }
 }
