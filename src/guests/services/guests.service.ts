@@ -95,9 +95,8 @@ export class GuestsService {
         existedGuest.pointCode &&
         existedGuest.pointCode.pointCode === newGuest.pointCode &&
         existedGuest.guestCode === newGuest.guestCode
-      ) {
+      )
         throw new BadRequestException(GUEST_EXISTED);
-      }
 
       const saveGuest = await this.guestsRepo.save(addGuest);
 
@@ -117,5 +116,19 @@ export class GuestsService {
       console.log(error);
       throw new BadRequestException(error.message);
     }
+  }
+
+  async deleteGuest(guestId: number): Promise<void> {
+    const guest = await this.guestsRepo
+      .createQueryBuilder('guests')
+      .where('guests.guestId = :guestId', { guestId: guestId })
+      .getOne();
+    if (!guest) throw new NotFoundException(GUESTS_NOT_FOUND);
+    await this.guestsRepo.delete(guestId);
+    await this.transRepo.delete({ guestCode: guest.guestCode });
+  }
+
+  async deleteAllGuests(): Promise<void> {
+    await this.guestsRepo.delete({});
   }
 }

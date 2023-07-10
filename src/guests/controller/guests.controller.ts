@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Post,
@@ -12,7 +13,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
 import { GuestsService } from '../services/guests.service';
 import { Role } from '../../auth/role.decorator';
-import { SUCCESS_RESPONSE } from 'src/utils/message.utils';
+import {
+  DELETE_ALL_GUEST_SUCCESS,
+  DELETE_DATA_SUCCESS,
+  SUCCESS_RESPONSE,
+} from 'src/utils/message.utils';
 import { GuestsDto } from '../dto/guests.dto';
 
 @Controller('api/guests')
@@ -70,6 +75,34 @@ export class GuestsController {
         message: SUCCESS_RESPONSE,
         count: guests.length,
         payload: guests,
+      });
+    } catch (error) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
+    }
+  }
+
+  @Delete('event/delete')
+  @Role('tenant', 'poc')
+  @ApiBearerAuth()
+  async deleteGuest(@Query('guestId') guestId: number, @Res() res) {
+    try {
+      await this.guestsService.deleteGuest(guestId);
+      res.status(HttpStatus.OK).json({
+        message: DELETE_DATA_SUCCESS,
+      });
+    } catch (error) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
+    }
+  }
+
+  @Delete('event/delete-all')
+  @Role('tenant', 'poc')
+  @ApiBearerAuth()
+  async deleteAllGuests(@Query('pointCode') pointCode: string, @Res() res) {
+    try {
+      await this.guestsService.deleteAllGuests();
+      res.status(HttpStatus.OK).json({
+        message: DELETE_ALL_GUEST_SUCCESS,
       });
     } catch (error) {
       res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });

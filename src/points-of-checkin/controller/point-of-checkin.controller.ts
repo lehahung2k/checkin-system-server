@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Patch,
@@ -13,11 +14,12 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PointsOfCheckinService } from '../services/point-of-checkin.service';
 import {
+  DELETE_DATA_SUCCESS,
   ERROR_RESPONSE,
   POC_NOT_FOUND,
   SUCCESS_RESPONSE,
-  UPDATE_INFO_SUCCESS,
-} from 'src/utils/message.utils';
+  UPDATE_INFO_SUCCESS
+} from "src/utils/message.utils";
 import { Role } from 'src/auth/role.decorator';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { RoleGuard } from 'src/auth/role.guard';
@@ -155,7 +157,26 @@ export class PointsOfCheckinController {
     } catch (error) {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message, payload: null });
+        .json({ message: error.message });
+    }
+  }
+
+  @Delete('/delete')
+  @Role('tenant', 'poc')
+  @ApiBearerAuth()
+  async deletePoc(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('pointCode') pointCode: string,
+  ): Promise<void> {
+    try {
+      const userId = parseInt(req.userId);
+      await this.pocService.deletePointOfCheckin(userId, pointCode);
+      res.status(HttpStatus.OK).json({ message: DELETE_DATA_SUCCESS });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
     }
   }
 }

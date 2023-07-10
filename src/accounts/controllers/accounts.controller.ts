@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Patch,
@@ -16,6 +17,7 @@ import { RoleGuard } from '../../auth/role.guard';
 import { Role } from '../../auth/role.decorator';
 import {
   CHANGE_PASSWORD_SUCCESS,
+  DELETE_ACCOUNT_SUCCESS,
   ERROR_RESPONSE,
   SUCCESS_RESPONSE,
   UPDATE_INFO_SUCCESS,
@@ -154,6 +156,54 @@ export class AccountsController {
     } catch (error) {
       console.log(error);
       res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
+    }
+  }
+
+  @Delete('/delete-by-admin')
+  @Role('admin')
+  @ApiBearerAuth()
+  async deleteAccountByAdmin(@Res() res: any, @Query('userId') userId: number) {
+    try {
+      await this.accountService.deleteAccount(userId);
+      res.status(HttpStatus.OK).json({ message: DELETE_ACCOUNT_SUCCESS });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
+    }
+  }
+
+  @Delete('/delete-by-tenant')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async deleteAccountByTenant(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('userId') pocAccId: number,
+  ) {
+    try {
+      const tenantAccId = parseInt(req.userId);
+      await this.accountService.deletePocAccount(tenantAccId, pocAccId);
+      res.status(HttpStatus.OK).json({ message: DELETE_ACCOUNT_SUCCESS });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
+    }
+  }
+
+  @Delete('/delete-own-account')
+  @Role('tenant', 'poc')
+  @ApiBearerAuth()
+  async deleteOwnAccount(@Res() res: any, @Req() req: any) {
+    try {
+      const userId = parseInt(req.userId);
+      await this.accountService.deleteOwnAccount(userId);
+      res.status(HttpStatus.OK).json({ message: DELETE_ACCOUNT_SUCCESS });
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
     }
   }
 }

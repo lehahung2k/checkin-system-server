@@ -92,6 +92,39 @@ export class AccountsService {
     await this.usersRepository.save(account);
   }
 
+  async deleteAccount(userId: number) {
+    const account = await this.usersRepository
+      .createQueryBuilder('account')
+      .where('account.userId = :userId', { userId })
+      .getOne();
+    if (!account) throw new NotFoundException();
+    if (!account.enabled) await this.usersRepository.delete({ userId });
+    else {
+      account.enabled = false;
+      await this.usersRepository.save(account);
+    }
+  }
+
+  async deletePocAccount(tenantAccId: number, pocAccId: number) {
+    const account = await this.usersRepository
+      .createQueryBuilder('account')
+      .where('account.userId = :userId', { pocAccId })
+      .getOne();
+    if (!account) throw new NotFoundException();
+    const tenant = await this.findTenantByUserId(tenantAccId);
+    if (account.tenantCode !== tenant.tenantCode)
+      await this.usersRepository.delete({ userId: pocAccId });
+  }
+
+  async deleteOwnAccount(userId: number) {
+    const account = await this.usersRepository
+      .createQueryBuilder('account')
+      .where('account.userId = :userId', { userId })
+      .getOne();
+    if (!account) throw new NotFoundException();
+    await this.usersRepository.delete({ userId });
+  }
+
   // Tìm kiếm tenant theo userId dựa vào quan hệ nhiều nhiều của bảng accounts và tenants
   async findTenantByUserId(userId: number): Promise<Tenants> {
     const account = await this.usersRepository
