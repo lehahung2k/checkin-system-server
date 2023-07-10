@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AccountsRepository } from '../repository/accounts.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountResDto } from '../dto/account-res.dto';
 import { Accounts } from '../entities/accounts.entity';
 import { Tenants } from '../../tenants/entities/tenants.entity';
+import { INCORRECT_PASSWORD } from '../../utils/message.utils';
+import { comparePassword, hashPassword } from '../../utils/algorithm.utils';
+import { UpdateProfileDto } from '../dto/update-profile.dto';
 
 @Injectable()
 export class AccountsService {
@@ -54,6 +61,35 @@ export class AccountsService {
       .where('account.role = :role', { role: 'tenant' })
       .getMany();
     return this.mappingResponse(listTenant);
+  }
+
+  async updateProfile(
+    userId: number,
+    updateProfileDto: Partial<UpdateProfileDto>,
+  ) {
+    const account = await this.usersRepository
+      .createQueryBuilder('account')
+      .where('account.userId = :userId', { userId })
+      .getOne();
+    if (!account) throw new NotFoundException();
+    Object.assign(account, updateProfileDto);
+    await this.usersRepository.save(account);
+  }
+
+  async changePassword(
+    userId: number,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    const account = await this.usersRepository
+      .createQueryBuilder('account')
+      .where('account.userId = :userId', { userId })
+      .getOne();
+    if (!account) throw new NotFoundException();
+    const checkPass = await comparePassword(oldPassword, account.password);
+    if (!checkPass) throw new BadRequestException(INCORRECT_PASSWORD);
+    account.password = await hashPassword(newPassword);
+    await this.usersRepository.save(account);
   }
 
   // Tìm kiếm tenant theo userId dựa vào quan hệ nhiều nhiều của bảng accounts và tenants

@@ -66,6 +66,7 @@ export class AuthService {
       case 'admin':
         return await this.accountRepo.save(newAccount);
       case 'tenant':
+        if (addNewAccount.tenantCode !== '') newAccount.tenantCode = '';
         return await this.accountRepo.save(newAccount);
       case 'poc': {
         if (await this.checkTenantCode(addNewAccount.tenantCode)) {

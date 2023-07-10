@@ -17,6 +17,7 @@ import { Tenants } from 'src/tenants/entities/tenants.entity';
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { EventResponseDto } from '../dto/event-response.dto';
 import { PointsOfCheckinService } from '../../points-of-checkin/services/point-of-checkin.service';
+import { UpdateEventDto } from '../dto/update-event.dto';
 
 @Injectable()
 export class EventsManagerService {
@@ -133,6 +134,26 @@ export class EventsManagerService {
       })
       .getOne();
     return this.transformEvent(event);
+  }
+
+  async updateEvent(
+    userId: number,
+    eventId: number,
+    updateEvent: Partial<UpdateEventDto>,
+  ) {
+    const tenant = await this.findTenantByUserId(userId);
+    if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
+    const tenantCode: string = tenant.tenantCode;
+    const event = await this.eventsMngRepo
+      .createQueryBuilder('EventsManager')
+      .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
+      .andWhere('EventsManager.eventId = :eventId', { eventId })
+      .getOne();
+    if (!event) throw new NotFoundException(EVENT_NOT_FOUND);
+    updateEvent.startTime = new Date(updateEvent.startTime);
+    updateEvent.endTime = new Date(updateEvent.endTime);
+    Object.assign(event, updateEvent);
+    await this.eventsMngRepo.save(event);
   }
 
   // Tìm kiếm tenant theo userId dựa vào quan hệ nhiều nhiều của bảng accounts và tenants

@@ -9,6 +9,8 @@ import { Tenants } from '../entities/tenants.entity';
 import { AddTenantDto } from '../dto/add-tenant.dto';
 import { BAD_REQUEST_RES, TENANT_NOT_FOUND } from '../../utils/message.utils';
 import { AccountsRepository } from '../../accounts/repository/accounts.repository';
+import { UpdateTenantDto } from '../dto/update-tenant.dto';
+import { AccountsService } from "../../accounts/services/accounts.service";
 
 @Injectable()
 export class TenantsService {
@@ -62,6 +64,18 @@ export class TenantsService {
     }
   }
 
+  async updateTenant(
+    userId: number,
+    updateTenant: Partial<UpdateTenantDto>,
+  ): Promise<void> {
+    const tenant = await this.findTenantByUserId(userId);
+    if (!tenant) {
+      throw new NotFoundException(TENANT_NOT_FOUND);
+    }
+    Object.assign(tenant, updateTenant);
+    await this.tenantsRepository.save(tenant);
+  }
+
   // Kiểm tra tenant đã tồn tai hay chưa bằng tên tenant
   async checkTenantByName(tenantName: string): Promise<Tenants> {
     try {
@@ -70,5 +84,15 @@ export class TenantsService {
       console.log(err);
       throw new NotFoundException(TENANT_NOT_FOUND);
     }
+  }
+
+  // Tìm kiếm tenant theo userId dựa vào quan hệ nhiều nhiều của bảng accounts và tenants
+  async findTenantByUserId(userId: number): Promise<Tenants> {
+    const account = await this.accountRepo
+      .createQueryBuilder('Accounts')
+      .leftJoinAndSelect('Accounts.tenants', 'tenants')
+      .where('Accounts.userId = :userId', { userId })
+      .getOne();
+    return account.tenants[0];
   }
 }

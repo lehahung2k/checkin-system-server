@@ -16,6 +16,7 @@ import {
 } from 'src/utils/message.utils';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { PocResDto } from '../dto/poc-res.dto';
+import { UpdatePocDto } from '../dto/update-poc.dto';
 
 @Injectable()
 export class PointsOfCheckinService {
@@ -129,6 +130,25 @@ export class PointsOfCheckinService {
       .getOne();
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
     return this.transformPocToPocResDto(poc);
+  }
+
+  async updatePointOfCheckin(
+    userId: number,
+    pointCode: string,
+    pocInfo: Partial<UpdatePocDto>,
+  ) {
+    const pocAccount = await this.accountsRepo.findOne({
+      where: { userId: userId },
+    });
+    if (!pocAccount) throw new NotFoundException(POC_NOT_FOUND);
+    const username = pocAccount.username;
+    const poc = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .where('pointOfCheckin.username = :username', { username })
+      .andWhere('pointOfCheckin.pointCode = :pointCode', { pointCode })
+      .getOne();
+    Object.assign(poc, pocInfo);
+    await this.pointsOfCheckinRepo.save(poc);
   }
 
   private transformPocToPocResDto(poc: PointsOfCheckin): PocResDto {
