@@ -22,3 +22,6 @@ export const POC_NOT_FOUND = 'Không tìm thấy quầy check-in nào';
 export const POC_EXISTED = 'Bạn đã tham gia sự kiện này rồi!';
 export const GUESTS_NOT_FOUND = 'Không tìm thấy khách check-in nào';
 export const GUEST_EXISTED = 'Khách đã check-in quầy này rồi!';
+export const DELETE_DATA_SUCCESS = 'Xóa dữ liệu thành công';
+export const DELETE_ALL_GUEST_SUCCESS = 'Xóa toàn bộ khách check-in thành công';
+export const DELETE_FAILED = 'Xóa thất bại, hãy xoá dữ liệu liên quan trước';

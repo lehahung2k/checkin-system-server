@@ -8,6 +8,10 @@ import { AccountsRepository } from 'src/accounts/repository/accounts.repository'
 import { PointsOfCheckinService } from '../points-of-checkin/services/point-of-checkin.service';
 import { PointsOfCheckinRepository } from '../points-of-checkin/repository/point-of-checkin.repository';
 import { AccountsService } from '../accounts/services/accounts.service';
+import { GuestsService } from '../guests/services/guests.service';
+import { GuestsRepository } from '../guests/repository/guests.repository';
+import { TransactionsRepository } from '../transactions/repository/transactions.repsitory';
+import { TransactionsService } from '../transactions/services/transactions.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([EventsManager])],
@@ -19,6 +23,10 @@ import { AccountsService } from '../accounts/services/accounts.service';
     AccountsService,
     PointsOfCheckinRepository,
     PointsOfCheckinService,
+    GuestsService,
+    GuestsRepository,
+    TransactionsRepository,
+    TransactionsService,
   ],
   exports: [EventsManagerService],
 })

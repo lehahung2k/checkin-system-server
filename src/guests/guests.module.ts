@@ -16,6 +16,6 @@ import { TransactionsRepository } from '../transactions/repository/transactions.
     TransactionsRepository,
     TransactionsService,
   ],
-  exports: [GuestsRepository],
+  exports: [GuestsRepository, GuestsService],
 })
 export class GuestsModule {}
