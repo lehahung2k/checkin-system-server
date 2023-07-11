@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Patch,
@@ -10,11 +11,12 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/auth/role.guard';
 import {
   ADD_SUCCESS,
   BAD_REQUEST_RES,
+  DELETE_DATA_SUCCESS,
   SUCCESS_RESPONSE,
   UN_RECOGNIZED_TENANT,
   UPDATE_INFO_SUCCESS,
@@ -33,6 +35,10 @@ export class EventsManagerController {
   @Get()
   @Role('admin')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lấy danh sách sự kiện bởi admin',
+  })
   async getEvents(@Res() res: any): Promise<void> {
     const allEvents = await this.eventService.getAllEvents();
     res
@@ -43,6 +49,11 @@ export class EventsManagerController {
   @Post('/add-event')
   @Role('tenant')
   @ApiBearerAuth()
+  @ApiBody({ type: NewEventDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Thêm sự kiện mới với quyền đối tác',
+  })
   async addEvent(@Body() newEvent: NewEventDto, @Res() res, @Req() req) {
     try {
       const userId = parseInt(req.userId);
@@ -64,6 +75,10 @@ export class EventsManagerController {
   @Get('/events')
   @Role('tenant')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lấy danh sách sự kiện bởi đối tác',
+  })
   async getEventsByTenant(@Res() res: any, @Req() req: any): Promise<void> {
     const userId = parseInt(req.userId);
     const events = await this.eventService.getEventsByTenant(userId);
@@ -75,6 +90,10 @@ export class EventsManagerController {
   @Get('/events/view')
   @Role('tenant')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Xem chi tiết sự kiện bởi mã sự kiện với quyền đối tác',
+  })
   async getEventDetails(
     @Res() res: any,
     @Req() req: any,
@@ -90,6 +109,10 @@ export class EventsManagerController {
   @Get('/events/poc-view')
   @Role('poc')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Xem chi tiết sự kiện bởi mã sự kiện với quyền quản lý quầy',
+  })
   async getEventDetailsForPoc(
     @Res() res: any,
     @Req() req: any,
@@ -108,6 +131,10 @@ export class EventsManagerController {
   @Get('/events/poc-code')
   @Role('poc')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lấy sự kiện bởi mã quầy với quyền quản lý quầy',
+  })
   async getEventByPointCode(
     @Res() res: any,
     @Req() req: any,
@@ -147,6 +174,24 @@ export class EventsManagerController {
       res
         .status(HttpStatus.OK)
         .json({ message: UPDATE_INFO_SUCCESS, payload: updatedEvent });
+    } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
+    }
+  }
+
+  @Delete('/events/delete')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async deleteEvent(
+    @Res() res: any,
+    @Req() req: any,
+    @Query('eventId') eventId: number,
+  ) {
+    try {
+      const userId = parseInt(req.userId);
+      await this.eventService.deleteEvent(userId, eventId);
+      res.status(HttpStatus.OK).json({ message: DELETE_DATA_SUCCESS });
     } catch (error) {
       console.log(error);
       res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });

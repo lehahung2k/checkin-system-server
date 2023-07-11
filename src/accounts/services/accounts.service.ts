@@ -98,8 +98,10 @@ export class AccountsService {
       .where('account.userId = :userId', { userId })
       .getOne();
     if (!account) throw new NotFoundException();
+    // nếu trạng thái của tài khoản là false thì xóa tài khoản
     if (!account.enabled) await this.usersRepository.delete({ userId });
     else {
+      // nếu trạng thái của tài khoản là true thì vô hiệu hóa tài khoản -> enabled = false
       account.enabled = false;
       await this.usersRepository.save(account);
     }
@@ -112,7 +114,8 @@ export class AccountsService {
       .getOne();
     if (!account) throw new NotFoundException();
     const tenant = await this.findTenantByUserId(tenantAccId);
-    if (account.tenantCode !== tenant.tenantCode)
+    // kiểm tra poc account có thuộc quyền quản lý của tenant account hay không thông qua tenantCode
+    if (account.tenantCode == tenant.tenantCode)
       await this.usersRepository.delete({ userId: pocAccId });
   }
 
