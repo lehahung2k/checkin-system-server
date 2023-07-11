@@ -13,8 +13,8 @@ import {
   DELETE_FAILED,
   EVENT_NOT_FOUND,
   POC_EXISTED,
-  POC_NOT_FOUND
-} from "src/utils/message.utils";
+  POC_NOT_FOUND,
+} from 'src/utils/message.utils';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { PocResDto } from '../dto/poc-res.dto';
 import { UpdatePocDto } from '../dto/update-poc.dto';
@@ -100,6 +100,19 @@ export class PointsOfCheckinService {
       .getOne();
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
     return this.transformPocToPocResDto(poc);
+  }
+
+  async getPocListByEventCode(eventCode: string): Promise<PocResDto[]> {
+    const listPoc = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
+      .leftJoinAndSelect('pointOfCheckin.username', 'username')
+      .where('pointOfCheckin.eventCode = :eventCode', { eventCode })
+      .getMany();
+    if (!listPoc) throw new NotFoundException(POC_NOT_FOUND);
+    return await Promise.all(
+      listPoc.map(async (poc) => this.transformPocToPocResDto(poc)),
+    );
   }
 
   async getPocListByPoc(userId: number): Promise<PocResDto[]> {

@@ -9,7 +9,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
 import { GuestsService } from '../services/guests.service';
 import { Role } from '../../auth/role.decorator';
@@ -39,6 +39,11 @@ export class GuestsController {
   @Post('event/checkin')
   @Role('poc')
   @ApiBearerAuth()
+  @ApiBody({ type: GuestsDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Tính năng check-in',
+  })
   async addGuest(@Body() newGuest: GuestsDto, @Res() res) {
     try {
       const guest = await this.guestsService.createGuest(newGuest);

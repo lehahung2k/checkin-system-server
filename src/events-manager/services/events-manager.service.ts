@@ -8,6 +8,7 @@ import { NewEventDto } from '../dto/new-event.dto';
 import { EventsManager } from '../entities/events-manager.entity';
 import {
   BAD_REQUEST_RES,
+  DELETE_FAILED,
   EVENT_NOT_FOUND,
   POC_NOT_FOUND,
   UN_RECOGNIZED_TENANT,
@@ -127,6 +128,7 @@ export class EventsManagerService {
   ): Promise<EventResponseDto> {
     const poc = await this.pocService.getPocDetails(userId, pointCode);
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
+    // tìm event theo pointCode dựa vào quan hệ giữa event và poc
     const event = await this.eventsMngRepo
       .createQueryBuilder('EventsManager')
       .where('EventsManager.eventCode = :eventCode', {
@@ -144,6 +146,7 @@ export class EventsManagerService {
     const tenant = await this.findTenantByUserId(userId);
     if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
     const tenantCode: string = tenant.tenantCode;
+    // truy vấn event theo tenantCode và eventId
     const event = await this.eventsMngRepo
       .createQueryBuilder('EventsManager')
       .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
@@ -152,8 +155,32 @@ export class EventsManagerService {
     if (!event) throw new NotFoundException(EVENT_NOT_FOUND);
     updateEvent.startTime = new Date(updateEvent.startTime);
     updateEvent.endTime = new Date(updateEvent.endTime);
+    // update event theo các dữ liệu được truyền vào
     Object.assign(event, updateEvent);
     await this.eventsMngRepo.save(event);
+  }
+
+  async deleteEvent(userId: number, eventId: number) {
+    const tenant = await this.findTenantByUserId(userId);
+    if (!tenant) throw new NotFoundException(UN_RECOGNIZED_TENANT);
+    const tenantCode: string = tenant.tenantCode;
+    // tìm event theo tenantCode và eventId
+    const event = await this.eventsMngRepo
+      .createQueryBuilder('EventsManager')
+      .where('EventsManager.tenantCode = :tenantCode', { tenantCode })
+      .andWhere('EventsManager.eventId = :eventId', { eventId })
+      .getOne();
+    if (!event) throw new NotFoundException(EVENT_NOT_FOUND);
+    // kiểm tra xem event có đang có các poc nào không
+    const poc = await this.pocService.getPocListByEventCode(event.eventCode);
+    if (poc.length > 0) throw new BadRequestException(DELETE_FAILED);
+    // xóa event
+    try {
+      await this.eventsMngRepo.delete(event.eventId);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(DELETE_FAILED);
+    }
   }
 
   // Tìm kiếm tenant theo userId dựa vào quan hệ nhiều nhiều của bảng accounts và tenants
@@ -166,6 +193,7 @@ export class EventsManagerService {
     return account.tenants[0];
   }
 
+  // Chuyển đổi dữ liệu trả về
   private transformEvent(event: EventsManager): EventResponseDto {
     const base64Image = event.eventImg
       ? Buffer.from(event.eventImg).toString('utf8')

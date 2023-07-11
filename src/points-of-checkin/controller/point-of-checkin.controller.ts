@@ -11,15 +11,15 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PointsOfCheckinService } from '../services/point-of-checkin.service';
 import {
   DELETE_DATA_SUCCESS,
   ERROR_RESPONSE,
   POC_NOT_FOUND,
   SUCCESS_RESPONSE,
-  UPDATE_INFO_SUCCESS
-} from "src/utils/message.utils";
+  UPDATE_INFO_SUCCESS,
+} from 'src/utils/message.utils';
 import { Role } from 'src/auth/role.decorator';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
 import { RoleGuard } from 'src/auth/role.guard';
@@ -81,6 +81,30 @@ export class PointsOfCheckinController {
     }
   }
 
+  @Get('/list-poc')
+  @Role('admin', 'tenant')
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Lấy toàn bộ danh sách point of checkin bằng mã sự kiện với quyền admin và đối tác',
+  })
+  async getAllPocByEventCode(
+    @Res() res: any,
+    @Query('eventCode') eventCode: string,
+  ): Promise<void> {
+    try {
+      const poc = await this.pocService.getPocListByEventCode(eventCode);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: SUCCESS_RESPONSE, payload: poc });
+    } catch (error) {
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: POC_NOT_FOUND, payload: null });
+    }
+  }
+
   @Get('/poc/view')
   @Role('tenant')
   @ApiBearerAuth()
@@ -105,6 +129,11 @@ export class PointsOfCheckinController {
   @Get('/poc/list-poc')
   @Role('poc')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Lấy toàn bộ danh sách point of checkin mà tài khoản quầy đang quản lý',
+  })
   async getPocListByPoc(@Res() res, @Req() req) {
     try {
       const userId = parseInt(req.userId);

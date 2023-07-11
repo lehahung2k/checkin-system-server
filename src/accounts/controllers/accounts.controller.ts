@@ -12,7 +12,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AccountsService } from '../services/accounts.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
 import { Role } from '../../auth/role.decorator';
 import {
@@ -35,6 +41,10 @@ export class AccountsController {
   @Get()
   @Role('admin')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lấy toàn bộ danh sách account với quyền admin',
+  })
   async getAll(@Res() res: any): Promise<void> {
     try {
       const accounts = await this.accountService.getAll();
@@ -51,6 +61,11 @@ export class AccountsController {
   @Get('/details')
   @Role('admin', 'tenant', 'poc')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Xem thông tin chi tiết của 1 account với userId được truyền vào trong header',
+  })
   async getUserById(@Res() res: any, @Req() req: any) {
     try {
       const userId = parseInt(req.userId);
@@ -68,6 +83,11 @@ export class AccountsController {
   @Get('/poc')
   @Role('tenant')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Xem danh sách toàn bộ poc đã tham gia với mã doanh nghiệp được cấp',
+  })
   async getAllPoc(@Res() res: any, @Req() req: any): Promise<void> {
     try {
       const userId = parseInt(req.userId);
@@ -85,6 +105,11 @@ export class AccountsController {
   @Get('/poc/view')
   @Role('tenant')
   @ApiBearerAuth()
+  @ApiParam({
+    name: 'username',
+    description: 'Xem thông tin của 1 tài khoản poc với username',
+    type: 'string',
+  })
   async getPocByUsername(
     @Res() res: any,
     @Req() req: any,
@@ -106,6 +131,10 @@ export class AccountsController {
   @Get('/tenant')
   @Role('admin')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Xem danh sách toàn bộ tài khoản tenant bằng quyền admin',
+  })
   async getAccountTenant(@Res() res: any): Promise<void> {
     try {
       const tenantAccount = await this.accountService.getAllAccountTenant();
@@ -122,6 +151,11 @@ export class AccountsController {
   @Patch('/update-profile')
   @Role('admin', 'tenant', 'poc')
   @ApiBearerAuth()
+  @ApiBody({ type: UpdateProfileDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Cập nhật thông tin của account với các tham số ở body',
+  }) // Mô tả cho endpoint
   async updateProfile(
     @Res() res: any,
     @Req() req: any,
@@ -140,6 +174,11 @@ export class AccountsController {
   @Put('/change-password')
   @Role('admin', 'tenant', 'poc')
   @ApiBearerAuth()
+  @ApiBody({ type: ChangePasswordDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Thay đổi mật khẩu của account',
+  })
   async changePassword(
     @Res() res,
     @Req() req,
@@ -162,6 +201,11 @@ export class AccountsController {
   @Delete('/delete-by-admin')
   @Role('admin')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Xóa tài khoản đối tác bằng quyền admin với userId được truyền vào trong query, trạng thái enable của tài khoản sẽ chuyển thành false',
+  })
   async deleteAccountByAdmin(@Res() res: any, @Query('userId') userId: number) {
     try {
       await this.accountService.deleteAccount(userId);
@@ -176,6 +220,11 @@ export class AccountsController {
   @Delete('/delete-by-tenant')
   @Role('tenant')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Xóa tài khoản poc với quyền tenant theo userId, trạng thái enable của tài khoản sẽ chuyển thành false',
+  })
   async deleteAccountByTenant(
     @Res() res: any,
     @Req() req: any,
@@ -195,6 +244,10 @@ export class AccountsController {
   @Delete('/delete-own-account')
   @Role('tenant', 'poc')
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Xóa tài khoản của chính mình',
+  })
   async deleteOwnAccount(@Res() res: any, @Req() req: any) {
     try {
       const userId = parseInt(req.userId);
