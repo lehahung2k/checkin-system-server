@@ -174,7 +174,7 @@ export class PointsOfCheckinController {
   @Role('poc')
   @ApiBearerAuth()
   async updatePoc(
-    @Body() updatePoc: UpdatePocDto,
+    @Body() updatePoc: Partial<UpdatePocDto>,
     @Res() res: any,
     @Req() req: any,
     @Query('pointCode') pointCode: string,

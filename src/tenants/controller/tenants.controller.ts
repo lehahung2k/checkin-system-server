@@ -88,7 +88,7 @@ export class TenantsController {
   @Role('tenant')
   @ApiBearerAuth()
   async updateTenant(
-    @Body() updateTenant: UpdateTenantDto,
+    @Body() updateTenant: Partial<UpdateTenantDto>,
     @Res() res,
     @Req() req,
   ) {

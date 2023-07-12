@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { IDENTITY_TYPE_NOT_NULL } from '../../utils/message.utils';
 
 export class GuestsDto {
   @IsNotEmpty()
@@ -7,7 +8,6 @@ export class GuestsDto {
   @ApiPropertyOptional()
   guestCode: string;
 
-  @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
   guestDescription: string;
@@ -18,7 +18,7 @@ export class GuestsDto {
   @ApiPropertyOptional()
   backImg: Buffer;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: IDENTITY_TYPE_NOT_NULL })
   @IsString()
   @ApiPropertyOptional()
   identityType: string;

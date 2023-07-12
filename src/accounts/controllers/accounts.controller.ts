@@ -159,7 +159,7 @@ export class AccountsController {
   async updateProfile(
     @Res() res: any,
     @Req() req: any,
-    @Body() updateProfileDto: UpdateProfileDto,
+    @Body() updateProfileDto: Partial<UpdateProfileDto>,
   ) {
     try {
       const userId = parseInt(req.userId);

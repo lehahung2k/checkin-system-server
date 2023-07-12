@@ -162,7 +162,7 @@ export class EventsManagerController {
     @Res() res: any,
     @Req() req: any,
     @Query('eventId') eventId: number,
-    @Body() updateEvent: UpdateEventDto,
+    @Body() updateEvent: Partial<UpdateEventDto>,
   ): Promise<void> {
     try {
       const userId = parseInt(req.userId);
