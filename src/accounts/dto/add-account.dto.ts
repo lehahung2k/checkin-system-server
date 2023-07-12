@@ -6,6 +6,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { STRONG_PASSWORD_MESSAGE } from '../../utils/message.utils';
 
 export class AddAccountDto {
   @IsNotEmpty()
@@ -16,7 +17,7 @@ export class AddAccountDto {
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
-  @IsStrongPassword({ minLength: 4 })
+  @IsStrongPassword({ minLength: 4 }, { message: STRONG_PASSWORD_MESSAGE })
   password: string;
 
   @IsNotEmpty()

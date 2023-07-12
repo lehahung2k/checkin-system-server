@@ -1,5 +1,7 @@
 export const USER_NOT_FOUND_MESSAGE = 'Không tìm thấy tài khoản!';
 export const INCORRECT_PASSWORD = 'Mật khẩu không chính xác!';
+export const STRONG_PASSWORD_MESSAGE =
+  'Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất 1 ký tự, chữ hoa, chữ thường và 1 số';
 export const CHANGE_PASSWORD_SUCCESS = 'Đổi mật khẩu thành công!';
 export const LOGIN_SUCCESS = 'Đăng nhập thành công';
 export const UN_AUTHORED_MESSAGE = 'Tên đăng nhập hoặc mật khẩu không đúng';
@@ -25,3 +27,4 @@ export const GUEST_EXISTED = 'Khách đã check-in quầy này rồi!';
 export const DELETE_DATA_SUCCESS = 'Xóa dữ liệu thành công';
 export const DELETE_ALL_GUEST_SUCCESS = 'Xóa toàn bộ khách check-in thành công';
 export const DELETE_FAILED = 'Xóa thất bại, hãy xoá dữ liệu liên quan trước';
+export const IDENTITY_TYPE_NOT_NULL = 'Không được bỏ trống loại giấy tờ';
