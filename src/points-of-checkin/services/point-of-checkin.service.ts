@@ -10,12 +10,15 @@ import { EventsManagerRepository } from 'src/events-manager/repository/events-ma
 import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { plainToInstance } from 'class-transformer';
 import {
+  DELETE_FAILED,
   EVENT_NOT_FOUND,
   POC_EXISTED,
   POC_NOT_FOUND,
 } from 'src/utils/message.utils';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { PocResDto } from '../dto/poc-res.dto';
+import { UpdatePocDto } from '../dto/update-poc.dto';
+import { GuestsService } from '../../guests/services/guests.service';
 
 @Injectable()
 export class PointsOfCheckinService {
@@ -24,6 +27,7 @@ export class PointsOfCheckinService {
     private readonly eventsManagerRepo: EventsManagerRepository,
     private readonly accountsRepo: AccountsRepository,
     private readonly accountsService: AccountsService,
+    private readonly guestsService: GuestsService,
   ) {}
 
   async getAllPointsOfCheckin(): Promise<PointsOfCheckin[]> {
@@ -98,6 +102,19 @@ export class PointsOfCheckinService {
     return this.transformPocToPocResDto(poc);
   }
 
+  async getPocListByEventCode(eventCode: string): Promise<PocResDto[]> {
+    const listPoc = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .leftJoinAndSelect('pointOfCheckin.eventCode', 'eventCode')
+      .leftJoinAndSelect('pointOfCheckin.username', 'username')
+      .where('pointOfCheckin.eventCode = :eventCode', { eventCode })
+      .getMany();
+    if (!listPoc) throw new NotFoundException(POC_NOT_FOUND);
+    return await Promise.all(
+      listPoc.map(async (poc) => this.transformPocToPocResDto(poc)),
+    );
+  }
+
   async getPocListByPoc(userId: number): Promise<PocResDto[]> {
     const pocAccount = await this.accountsRepo.findOne({
       where: { userId: userId },
@@ -129,6 +146,47 @@ export class PointsOfCheckinService {
       .getOne();
     if (!poc) throw new NotFoundException(POC_NOT_FOUND);
     return this.transformPocToPocResDto(poc);
+  }
+
+  async updatePointOfCheckin(
+    userId: number,
+    pointCode: string,
+    pocInfo: Partial<UpdatePocDto>,
+  ) {
+    const pocAccount = await this.accountsRepo.findOne({
+      where: { userId: userId },
+    });
+    if (!pocAccount) throw new NotFoundException(POC_NOT_FOUND);
+    const username = pocAccount.username;
+    const poc = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .where('pointOfCheckin.username = :username', { username })
+      .andWhere('pointOfCheckin.pointCode = :pointCode', { pointCode })
+      .getOne();
+    Object.assign(poc, pocInfo);
+    await this.pointsOfCheckinRepo.save(poc);
+  }
+
+  async deletePointOfCheckin(userId: number, pointCode: string) {
+    const pocAccount = await this.accountsRepo.findOne({
+      where: { userId: userId },
+    });
+    if (!pocAccount) throw new NotFoundException(POC_NOT_FOUND);
+    const username = pocAccount.username;
+    const poc = await this.pointsOfCheckinRepo
+      .createQueryBuilder('pointOfCheckin')
+      .where('pointOfCheckin.username = :username', { username })
+      .andWhere('pointOfCheckin.pointCode = :pointCode', { pointCode })
+      .getOne();
+    if (!poc) throw new NotFoundException(POC_NOT_FOUND);
+    const guests = this.guestsService.getAllGuestsByPointCode(pointCode);
+    if (guests.length > 0) throw new BadRequestException(DELETE_FAILED);
+    try {
+      await this.pointsOfCheckinRepo.delete(poc.pointId);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(DELETE_FAILED);
+    }
   }
 
   private transformPocToPocResDto(poc: PointsOfCheckin): PocResDto {

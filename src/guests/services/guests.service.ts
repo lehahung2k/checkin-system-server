@@ -80,10 +80,17 @@ export class GuestsService {
   // check-in
   async createGuest(newGuest: GuestsDto): Promise<Guests> {
     try {
+      const guestCode = await this.processGuestCode(
+        newGuest.guestCode,
+        newGuest.identityType,
+      );
       const addGuest = plainToInstance(Guests, {
         ...newGuest,
+        guestCode: guestCode,
         enabled: true,
       });
+
+      console.log(addGuest);
 
       const existedGuest = await this.transRepo.findOne({
         where: { guestCode: newGuest.guestCode },
@@ -94,15 +101,14 @@ export class GuestsService {
         existedGuest &&
         existedGuest.pointCode &&
         existedGuest.pointCode.pointCode === newGuest.pointCode &&
-        existedGuest.guestCode === newGuest.guestCode
-      ) {
+        existedGuest.guestCode === guestCode
+      )
         throw new BadRequestException(GUEST_EXISTED);
-      }
 
       const saveGuest = await this.guestsRepo.save(addGuest);
 
       const transactionDto: TransactionsDto = {
-        guestCode: newGuest.guestCode,
+        guestCode: guestCode,
         note: newGuest.guestDescription,
         createdAt: new Date(),
         pointCode: newGuest.pointCode,
@@ -116,6 +122,42 @@ export class GuestsService {
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error.message);
+    }
+  }
+
+  async deleteGuest(guestId: number): Promise<void> {
+    const guest = await this.guestsRepo
+      .createQueryBuilder('guests')
+      .where('guests.guestId = :guestId', { guestId: guestId })
+      .getOne();
+    if (!guest) throw new NotFoundException(GUESTS_NOT_FOUND);
+    await this.guestsRepo.delete(guestId);
+    await this.transRepo.delete({ guestCode: guest.guestCode });
+  }
+
+  async deleteAllGuests(): Promise<void> {
+    await this.guestsRepo.delete({});
+  }
+
+  async processGuestCode(guestCode: string, identityType: string) {
+    if (identityType === 'citizen_identity_card') {
+      // Extract the first 12 digits from the guestCode
+      const match = guestCode.match(/^\d{12}/);
+      if (match) {
+        return match[0];
+      } else {
+        throw new BadRequestException('Invalid guestCode format');
+      }
+    } else if (identityType === 'student_card') {
+      // Extract the number from the URL
+      const match = guestCode.match(/\/(\d+)\//);
+      if (match && match[1]) {
+        return match[1];
+      } else {
+        throw new BadRequestException('Invalid guestCode format');
+      }
+    } else {
+      return guestCode;
     }
   }
 }

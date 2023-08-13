@@ -33,6 +33,7 @@ async function bootstrap() {
   // Tăng giới hạn kích thước payload
   app.use(express.json({ limit: '5mb' }));
   app.use(express.urlencoded({ limit: '5mb', extended: true }));
+
   // app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT || 8080, () => {

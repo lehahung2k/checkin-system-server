@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Patch,
   Post,
   Req,
   Res,
@@ -19,7 +20,9 @@ import {
   ERROR_RESPONSE,
   SUCCESS_RESPONSE,
   TENANT_NOT_FOUND,
+  UPDATE_INFO_SUCCESS,
 } from '../../utils/message.utils';
+import { UpdateTenantDto } from '../dto/update-tenant.dto';
 
 @Controller('api/tenants')
 @ApiTags('Tenants')
@@ -78,6 +81,24 @@ export class TenantsController {
       res
         .status(HttpStatus.NOT_FOUND)
         .json({ message: TENANT_NOT_FOUND, payload: null });
+    }
+  }
+
+  @Patch('/update')
+  @Role('tenant')
+  @ApiBearerAuth()
+  async updateTenant(
+    @Body() updateTenant: Partial<UpdateTenantDto>,
+    @Res() res,
+    @Req() req,
+  ) {
+    const userId = parseInt(req.userId);
+    try {
+      await this.tenantsService.updateTenant(userId, updateTenant);
+      res.status(HttpStatus.OK).json({ message: UPDATE_INFO_SUCCESS });
+    } catch (err) {
+      console.log(err);
+      res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
     }
   }
 }
