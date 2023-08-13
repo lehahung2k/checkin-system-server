@@ -32,9 +32,9 @@ export class Transactions {
   @Column({ name: 'enabled', type: 'tinyint', default: true })
   enabled: boolean;
 
-  @Column({ name: 'checkinImg1', type: 'longblob' })
+  @Column({ name: 'checkinImg1', type: 'longblob', nullable: true })
   checkinImg1: Buffer;
 
-  @Column({ name: 'checkinImg2', type: 'longblob' })
+  @Column({ name: 'checkinImg2', type: 'longblob', nullable: true })
   checkinImg2: Buffer;
 }
