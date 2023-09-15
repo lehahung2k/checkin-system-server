@@ -55,11 +55,25 @@ export class GuestsController {
     }
   }
 
+  // @Get('event/details')
+  // @Role('tenant', 'poc')
+  // @ApiBearerAuth()
+  // async getGuestByGuestCode(@Res() res, @Query('guestCode') guestCode: string) {
+  //   const guest = await this.guestsService.getGuestByCode(guestCode);
+  //   res
+  //     .status(HttpStatus.OK)
+  //     .json({ message: SUCCESS_RESPONSE, payload: guest });
+  // }
+
   @Get('event/details')
   @Role('tenant', 'poc')
   @ApiBearerAuth()
-  async getGuestByGuestCode(@Res() res, @Query('guestCode') guestCode: string) {
-    const guest = await this.guestsService.getGuestByCode(guestCode);
+  async getGuestByGuestCode(
+    @Res() res,
+    @Query('pointCode') pointCode: string,
+    @Query('guestCode') guestCode: string,
+  ) {
+    const guest = await this.guestsService.getGuestByCode(pointCode, guestCode);
     res
       .status(HttpStatus.OK)
       .json({ message: SUCCESS_RESPONSE, payload: guest });
