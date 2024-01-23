@@ -44,6 +44,9 @@ export class Accounts {
   @Column({ name: 'enabled', type: 'tinyint', default: true })
   enabled: boolean;
 
+  @Column({ name: 'confirmMailToken', length: 255, nullable: true })
+  confirmMailToken: string;
+
   @ManyToMany(() => Tenants, { cascade: true })
   @JoinTable({
     name: 'AccountsToTenants',

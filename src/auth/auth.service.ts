@@ -13,6 +13,7 @@ import { LoginDto } from '../accounts/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import {
   CREATE_ACCOUNT_FAILED,
+  DUPLICATE_EMAIL_OR_USERNAME,
   INCORRECT_PASSWORD,
   UN_ACTIVATE_ACCOUNT,
   UN_RECOGNIZED_TENANT,
@@ -43,8 +44,12 @@ export class AuthService {
   }
 
   async createAccount(addNewAccount: AddAccountDto): Promise<Accounts> {
-    const encryptPass = await hashPassword(addNewAccount.password);
+    const emailErr = await this.isEmailTaken(addNewAccount.email);
+    const usernameErr = await this.isUsernameTaken(addNewAccount.username);
+    if (emailErr || usernameErr)
+      throw new BadRequestException(DUPLICATE_EMAIL_OR_USERNAME);
 
+    const encryptPass = await hashPassword(addNewAccount.password);
     const newAccount: {
       username: string;
       password: any;
@@ -63,8 +68,6 @@ export class AuthService {
       enabled: true,
     };
     switch (addNewAccount.role) {
-      case 'admin':
-        return await this.accountRepo.save(newAccount);
       case 'tenant':
         if (addNewAccount.tenantCode !== '') newAccount.tenantCode = '';
         return await this.accountRepo.save(newAccount);
@@ -77,6 +80,7 @@ export class AuthService {
         throw new BadRequestException(CREATE_ACCOUNT_FAILED);
     }
   }
+
   async isEmailTaken(email: string): Promise<boolean> {
     const existingAccount = await this.accountRepo.findOne({
       where: { email },

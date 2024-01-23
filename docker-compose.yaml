@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  database:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=checkin
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3307:3306'
+    expose:
+      - 3306
+    networks:
+      - default
+
+  backend:
+    build: 
+      context: . # đường dẫn đến Dockerfile của back-end
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+
+# docker compose -p checkin-system up -d
+
