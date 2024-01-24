@@ -33,19 +33,6 @@ export class GuestsService {
     );
   }
 
-  async getGuestByCode(guestCode: string): Promise<GuestResponseDto> {
-    const guest = await this.guestsRepo.findOne({
-      where: { guestCode: guestCode },
-    });
-    const frontImg = Buffer.from(guest.frontImg).toString('utf8');
-    const backImg = Buffer.from(guest.backImg).toString('utf8');
-    return plainToInstance(GuestResponseDto, {
-      ...guest,
-      frontImg: frontImg,
-      backImg: backImg,
-    });
-  }
-
   async getAllGuestsByPointCode(
     pointCode: string,
   ): Promise<GuestResponseDto[]> {
@@ -75,6 +62,32 @@ export class GuestsService {
       },
       { concurrency: 10 },
     );
+  }
+
+  // async getGuestByCode(guestCode: string): Promise<GuestResponseDto> {
+  //   const guest = await this.guestsRepo.findOne({
+  //     where: { guestCode: guestCode },
+  //   });
+  //   const frontImg = Buffer.from(guest.frontImg).toString('utf8');
+  //   const backImg = Buffer.from(guest.backImg).toString('utf8');
+  //   return plainToInstance(GuestResponseDto, {
+  //     ...guest,
+  //     frontImg: frontImg,
+  //     backImg: backImg,
+  //   });
+  // }
+
+  async getGuestByCode(
+    pointCode: string,
+    guestCode: string,
+  ): Promise<GuestResponseDto | null> {
+    const guestsList = await this.getAllGuestsByPointCode(pointCode);
+
+    const targetGuest = guestsList.find(
+      (guest) => guest.guestCode === guestCode,
+    );
+
+    return targetGuest || null;
   }
 
   // check-in
@@ -141,7 +154,6 @@ export class GuestsService {
 
   async processGuestCode(guestCode: string, identityType: string) {
     if (identityType === 'citizen_identity_card') {
-      // Extract the first 12 digits from the guestCode
       const match = guestCode.match(/^\d{12}/);
       if (match) {
         return match[0];
@@ -149,7 +161,6 @@ export class GuestsService {
         throw new BadRequestException('Invalid guestCode format');
       }
     } else if (identityType === 'student_card') {
-      // Extract the number from the URL
       const match = guestCode.match(/\/(\d+)\//);
       if (match && match[1]) {
         return match[1];
