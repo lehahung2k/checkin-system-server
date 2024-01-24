@@ -26,5 +26,12 @@ services:
     networks:
       - default
 
-# docker compose -p checkin-system up -d
+  client:
+    image: nginx:1.23.3
+    ports:
+      - "2000:80"
+    volumes:
+      - ../checkin-system-client/build:/usr/share/nginx/html
+      - ../checkin-system-client/default.conf:/etc/nginx/conf.d/default.conf
 
+# docker compose -p checkin-system up -d
