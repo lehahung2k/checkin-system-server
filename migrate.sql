@@ -1,3 +1,5 @@
+create schema if not exists checkin;
+
 create table if not exists Accounts (
     userId bigint auto_increment primary key,
     username varchar(255) not null,
