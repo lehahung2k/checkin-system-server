@@ -6,19 +6,19 @@ import {
 import { PointsOfCheckinRepository } from '../repository/point-of-checkin.repository';
 import { PointsOfCheckin } from '../entities/points-of-checkin.entity';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
-import { EventsManagerRepository } from 'src/events-manager/repository/events-manager.repository';
-import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
 import { plainToInstance } from 'class-transformer';
 import {
   DELETE_FAILED,
   EVENT_NOT_FOUND,
   POC_EXISTED,
   POC_NOT_FOUND,
-} from 'src/utils/message.utils';
+} from '../../utils/message.utils';
 import { AccountsService } from '../../accounts/services/accounts.service';
 import { PocResDto } from '../dto/poc-res.dto';
 import { UpdatePocDto } from '../dto/update-poc.dto';
 import { GuestsService } from '../../guests/services/guests.service';
+import {AccountsRepository} from "../../accounts/repository/accounts.repository";
+import {EventsManagerRepository} from "../../events-manager/repository/events-manager.repository";
 
 @Injectable()
 export class PointsOfCheckinService {

@@ -20,6 +20,7 @@ import {
   USER_NOT_FOUND_MESSAGE,
 } from '../utils/message.utils';
 import { TenantsRepository } from '../tenants/repository/tenants.repository';
+import {MailerService} from "@nestjs-modules/mailer";
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
     private readonly accountRepo: AccountsRepository,
     private readonly tenantRepo: TenantsRepository,
     private readonly jwtService: JwtService,
+    private mailService: MailerService,
   ) {}
 
   async login(loginForm: LoginDto): Promise<Accounts> {
@@ -67,6 +69,12 @@ export class AuthService {
       active: 1,
       enabled: true,
     };
+    await this.mailService.sendMail({
+        to: addNewAccount.email,
+        subject: "Đăng ký thành công tài khoản",
+        text: "Bạn đã đăng ký thành công tài khoản. Quay lại website bằng đường link",
+    });
+
     switch (addNewAccount.role) {
       case 'tenant':
         if (addNewAccount.tenantCode !== '') newAccount.tenantCode = '';
@@ -79,6 +87,7 @@ export class AuthService {
       default:
         throw new BadRequestException(CREATE_ACCOUNT_FAILED);
     }
+
   }
 
   async isEmailTaken(email: string): Promise<boolean> {

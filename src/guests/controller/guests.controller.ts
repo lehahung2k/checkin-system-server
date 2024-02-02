@@ -13,12 +13,12 @@ import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '../../auth/role.guard';
 import { GuestsService } from '../services/guests.service';
 import { Role } from '../../auth/role.decorator';
+import { GuestsDto } from '../dto/guests.dto';
 import {
   DELETE_ALL_GUEST_SUCCESS,
   DELETE_DATA_SUCCESS,
-  SUCCESS_RESPONSE,
-} from 'src/utils/message.utils';
-import { GuestsDto } from '../dto/guests.dto';
+  SUCCESS_RESPONSE
+} from "../../utils/message.utils";
 
 @Controller('api/guests')
 @ApiTags('Guests')

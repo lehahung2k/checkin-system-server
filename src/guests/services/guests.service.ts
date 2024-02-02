@@ -12,7 +12,7 @@ import { TransactionsDto } from '../../transactions/dto/transactions.dto';
 import { TransactionsService } from '../../transactions/services/transactions.service';
 import { Promise } from 'bluebird';
 import { GUESTS_NOT_FOUND, GUEST_EXISTED } from '../../utils/message.utils';
-import { TransactionsRepository } from 'src/transactions/repository/transactions.repsitory';
+import {TransactionsRepository} from "../../transactions/repository/transactions.repsitory";
 
 @Injectable()
 export class GuestsService {
