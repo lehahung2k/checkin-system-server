@@ -7,67 +7,67 @@ import { Expose } from 'class-transformer';
 import { plainToClass } from 'class-transformer';
 
 class EventResponseDtoMock extends EventResponseDto {
-    @ApiPropertyOptional()
-    @Expose()
-    eventId: number;
+  @ApiPropertyOptional()
+  @Expose()
+  eventId: number;
 
-    @ApiPropertyOptional()
-    @Expose()
-    eventCode: string;
+  @ApiPropertyOptional()
+  @Expose()
+  eventCode: string;
 
-    @ApiPropertyOptional()
-    @Expose()
-    eventName: string;
+  @ApiPropertyOptional()
+  @Expose()
+  eventName: string;
 
-    @ApiPropertyOptional()
-    @Expose()
-    tenantCode: string;
+  @ApiPropertyOptional()
+  @Expose()
+  tenantCode: string;
 
-    @ApiPropertyOptional()
-    @Expose()
-    eventDescription: string;
+  @ApiPropertyOptional()
+  @Expose()
+  eventDescription: string;
 
-    @ApiPropertyOptional()
-    @Expose()
-    startTime: Date;
+  @ApiPropertyOptional()
+  @Expose()
+  startTime: Date;
 
-    @ApiPropertyOptional()
-    @Expose()
-    endTime: Date;
+  @ApiPropertyOptional()
+  @Expose()
+  endTime: Date;
 
-    @ApiPropertyOptional()
-    @Expose()
-    eventImg: string;
+  @ApiPropertyOptional()
+  @Expose()
+  eventImg: string;
 
-    @ApiPropertyOptional()
-    @Expose()
-    enabled: boolean;
+  @ApiPropertyOptional()
+  @Expose()
+  enabled: boolean;
 }
 
 describe('EventResponseDto', () => {
-    let eventResponseDto: EventResponseDtoMock;
+  let eventResponseDto: EventResponseDtoMock;
 
-    beforeEach(() => {
-        eventResponseDto = new EventResponseDtoMock();
-    });
+  beforeEach(() => {
+    eventResponseDto = new EventResponseDtoMock();
+  });
 
-    it('should be defined', () => {
-        expect(eventResponseDto).toBeDefined();
-    });
+  it('should be defined', () => {
+    expect(eventResponseDto).toBeDefined();
+  });
 
-    it('should have valid properties after instantiation', () => {
-        expect(eventResponseDto.eventId).toBeUndefined();
-        expect(eventResponseDto.eventCode).toBeUndefined();
-    });
+  it('should have valid properties after instantiation', () => {
+    expect(eventResponseDto.eventId).toBeUndefined();
+    expect(eventResponseDto.eventCode).toBeUndefined();
+  });
 
-    it('should expose properties correctly using @Expose()', () => {
-        const plainObject = plainToClass(EventResponseDtoMock, {
-            eventId: 1,
-            eventCode: 'EvtCode',
-            eventName: 'EventName',
-        });
-        expect(plainObject.eventId).toEqual(1);
-        expect(plainObject.eventCode).toEqual('EvtCode');
-        expect(plainObject.eventName).toEqual('EventName');
+  it('should expose properties correctly using @Expose()', () => {
+    const plainObject = plainToClass(EventResponseDtoMock, {
+      eventId: 1,
+      eventCode: 'EvtCode',
+      eventName: 'EventName',
     });
+    expect(plainObject.eventId).toEqual(1);
+    expect(plainObject.eventCode).toEqual('EvtCode');
+    expect(plainObject.eventName).toEqual('EventName');
+  });
 });

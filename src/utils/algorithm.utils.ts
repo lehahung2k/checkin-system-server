@@ -12,3 +12,13 @@ export const comparePassword = async (
 ): Promise<boolean> => {
   return await bcrypt.compare(password, hashedPass);
 };
+
+export const generateConfirmToken = (length: number): string => {
+  const charset =
+    '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let retVal = '';
+  for (let i = 0; i < length; i++) {
+    retVal += charset.charAt(Math.floor(Math.random() * charset.length));
+  }
+  return retVal;
+};

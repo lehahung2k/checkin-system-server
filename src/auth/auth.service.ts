@@ -8,7 +8,11 @@ import { AccountsRepository } from '../accounts/repository/accounts.repository';
 import { AddAccountDto } from '../accounts/dto/add-account.dto';
 import { Accounts } from '../accounts/entities/accounts.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { comparePassword, hashPassword } from '../utils/algorithm.utils';
+import {
+  comparePassword,
+  generateConfirmToken,
+  hashPassword,
+} from '../utils/algorithm.utils';
 import { LoginDto } from '../accounts/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -20,7 +24,7 @@ import {
   USER_NOT_FOUND_MESSAGE,
 } from '../utils/message.utils';
 import { TenantsRepository } from '../tenants/repository/tenants.repository';
-import {MailerService} from "@nestjs-modules/mailer";
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +54,7 @@ export class AuthService {
     const usernameErr = await this.isUsernameTaken(addNewAccount.username);
     if (emailErr || usernameErr)
       throw new BadRequestException(DUPLICATE_EMAIL_OR_USERNAME);
-
+    const confirmToken = generateConfirmToken(8);
     const encryptPass = await hashPassword(addNewAccount.password);
     const newAccount: {
       username: string;
@@ -63,17 +67,27 @@ export class AuthService {
       tenantCode: string;
       companyName: string;
       enabled: boolean;
+      confirmMailToken: string;
     } = {
       ...addNewAccount,
       password: encryptPass,
       active: 1,
       enabled: true,
+      confirmMailToken: confirmToken,
     };
-    await this.mailService.sendMail({
+
+    await this.mailService
+      .sendMail({
         to: addNewAccount.email,
-        subject: "Đăng ký thành công tài khoản",
-        text: "Bạn đã đăng ký thành công tài khoản. Quay lại website bằng đường link",
-    });
+        subject: 'Đăng ký thành công tài khoản',
+        text:
+          'Chào mừng đến với ECM. Để kích hoạt tài khoản, mã xác nhận được cấp của bạn là: ' +
+          confirmToken,
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new BadRequestException(err.message);
+      });
 
     switch (addNewAccount.role) {
       case 'tenant':
@@ -87,7 +101,6 @@ export class AuthService {
       default:
         throw new BadRequestException(CREATE_ACCOUNT_FAILED);
     }
-
   }
 
   async isEmailTaken(email: string): Promise<boolean> {

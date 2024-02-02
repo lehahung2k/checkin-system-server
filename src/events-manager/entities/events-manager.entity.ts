@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tenants } from '../../tenants/entities/tenants.entity';
-import {PointsOfCheckin} from "../../points-of-checkin/entities/points-of-checkin.entity";
+import { PointsOfCheckin } from '../../points-of-checkin/entities/points-of-checkin.entity';
 
 @Entity({ name: 'EventsMng' })
 export class EventsManager {

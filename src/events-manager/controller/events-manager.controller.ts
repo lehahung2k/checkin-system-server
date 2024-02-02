@@ -24,7 +24,7 @@ import {
 import { EventsManagerService } from '../services/events-manager.service';
 import { NewEventDto } from '../dto/new-event.dto';
 import { UpdateEventDto } from '../dto/update-event.dto';
-import {Role} from "../../auth/role.decorator";
+import { Role } from '../../auth/role.decorator';
 
 @ApiTags('Events Manager')
 @Controller('api/events-manager')

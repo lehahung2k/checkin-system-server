@@ -11,32 +11,13 @@ import { AuthModule } from './auth/auth.module';
 import { databaseConfig } from './config/database.config';
 import { TransactionsModule } from './transactions/transactions.module';
 import { DevicesModule } from './devices/devices.module';
-import { MailerModule} from "@nestjs-modules/mailer";
-import {ConfigModule, ConfigService} from "@nestjs/config";
-import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailConfig } from './config/mail.config';
 
 @Module({
-
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
-    ConfigModule.forRoot(),
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (config: ConfigService)=> ({
-        transport: {
-          host: config.get('MAIL_HOST'),
-          secure: false,
-          auth: {
-            user: config.get('MAIL_USER'),
-            pass: config.get('MAIL_PASSWORD'),
-          }
-        },
-        defaults: {
-          from: `"No Reply" <${config.get('MAIL_FROM')}>`
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    MailerModule.forRootAsync(mailConfig),
     TenantsModule,
     AccountsModule,
     EventsManagerModule,
