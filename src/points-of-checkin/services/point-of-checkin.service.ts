@@ -17,8 +17,8 @@ import { AccountsService } from '../../accounts/services/accounts.service';
 import { PocResDto } from '../dto/poc-res.dto';
 import { UpdatePocDto } from '../dto/update-poc.dto';
 import { GuestsService } from '../../guests/services/guests.service';
-import {AccountsRepository} from "../../accounts/repository/accounts.repository";
-import {EventsManagerRepository} from "../../events-manager/repository/events-manager.repository";
+import { AccountsRepository } from '../../accounts/repository/accounts.repository';
+import { EventsManagerRepository } from '../../events-manager/repository/events-manager.repository';
 
 @Injectable()
 export class PointsOfCheckinService {
