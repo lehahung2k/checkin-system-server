@@ -8,6 +8,7 @@ import {
   LOGIN_SUCCESS,
   UN_RECOGNIZED_TENANT,
   UN_AUTHORED_MESSAGE,
+  REGISTER_ACCOUNT_SUCCESS,
 } from '../utils/message.utils';
 
 @Controller('api/auth')
@@ -42,11 +43,22 @@ export class AuthController {
   async register(@Body() newAccount: AddAccountDto, @Res() res: any) {
     try {
       await this.authService.createAccount(newAccount);
-      res.status(HttpStatus.OK).json({ message: CREATE_ACCOUNT_SUCCESS });
+      res.status(HttpStatus.OK).json({ message: REGISTER_ACCOUNT_SUCCESS });
     } catch (error) {
       let resMsg = error.message;
       if (error.message == UN_RECOGNIZED_TENANT) resMsg = UN_RECOGNIZED_TENANT;
       res.status(HttpStatus.BAD_REQUEST).json({ message: resMsg });
+    }
+  }
+
+  @Post('/confirm')
+  async confirm(@Res() res: any, @Body() body: any) {
+    try {
+      const confirmMailToken = body.confirmMailToken;
+      await this.authService.confirmMail(confirmMailToken);
+      res.status(HttpStatus.OK).json({ message: CREATE_ACCOUNT_SUCCESS });
+    } catch (error) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
     }
   }
 }

@@ -19,6 +19,7 @@ import {
   CREATE_ACCOUNT_FAILED,
   DUPLICATE_EMAIL_OR_USERNAME,
   INCORRECT_PASSWORD,
+  INCORRECT_TOKEN,
   UN_ACTIVATE_ACCOUNT,
   UN_RECOGNIZED_TENANT,
   USER_NOT_FOUND_MESSAGE,
@@ -42,7 +43,7 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException(USER_NOT_FOUND_MESSAGE);
     } else {
-      if (!user.enabled) throw new NotFoundException(UN_ACTIVATE_ACCOUNT);
+      if (!user.enabled) throw new BadRequestException(UN_ACTIVATE_ACCOUNT);
       const checkPass = await comparePassword(password, user.password);
       if (!checkPass) throw new UnauthorizedException(INCORRECT_PASSWORD);
       else return user;
@@ -72,7 +73,7 @@ export class AuthService {
       ...addNewAccount,
       password: encryptPass,
       active: 1,
-      enabled: true,
+      enabled: false,
       confirmMailToken: confirmToken,
     };
 
@@ -81,7 +82,7 @@ export class AuthService {
         to: addNewAccount.email,
         subject: 'Đăng ký thành công tài khoản',
         text:
-          'Chào mừng đến với ECM. Để kích hoạt tài khoản, mã xác nhận được cấp của bạn là: ' +
+          'Chào mừng đến với ECM. Nhập mã xác nhận để kích hoạt tài khoản: ' +
           confirmToken,
       })
       .catch((err) => {
@@ -101,6 +102,16 @@ export class AuthService {
       default:
         throw new BadRequestException(CREATE_ACCOUNT_FAILED);
     }
+  }
+
+  async confirmMail(token: string): Promise<Accounts> {
+    const user = await this.accountRepo.findOne({
+      where: { confirmMailToken: token },
+    });
+    if (!user) throw new NotFoundException(INCORRECT_TOKEN);
+    user.enabled = true;
+    user.confirmMailToken = '';
+    return await this.accountRepo.save(user);
   }
 
   async isEmailTaken(email: string): Promise<boolean> {
