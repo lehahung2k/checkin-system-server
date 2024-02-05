@@ -14,7 +14,7 @@ export const mailConfig: MailerAsyncOptions = {
       },
     },
     defaults: {
-      from: `"Hệ thống check-in đa điểm " <${process.env.MAIL_FROM}>`,
+      from: `Hệ thống check-in đa điểm <${process.env.MAIL_FROM}>`,
     },
   }),
 };

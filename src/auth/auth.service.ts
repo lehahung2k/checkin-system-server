@@ -51,31 +51,33 @@ export class AuthService {
   }
 
   async createAccount(addNewAccount: AddAccountDto): Promise<Accounts> {
-    const emailErr = await this.isEmailTaken(addNewAccount.email);
-    const usernameErr = await this.isUsernameTaken(addNewAccount.username);
-    if (emailErr || usernameErr)
+    const isEmailTaken = await this.isEmailTaken(addNewAccount.email);
+    const isUsernameTaken = await this.isUsernameTaken(addNewAccount.username);
+    if (isEmailTaken || isUsernameTaken)
       throw new BadRequestException(DUPLICATE_EMAIL_OR_USERNAME);
+
     const confirmToken = generateConfirmToken(8);
     const encryptPass = await hashPassword(addNewAccount.password);
-    const newAccount: {
-      username: string;
-      password: any;
-      fullName: string;
-      phoneNumber: string;
-      email: string;
-      active: number;
-      role: string;
-      tenantCode: string;
-      companyName: string;
-      enabled: boolean;
-      confirmMailToken: string;
-    } = {
+
+    const newAccount = {
       ...addNewAccount,
       password: encryptPass,
       active: 1,
       enabled: false,
       confirmMailToken: confirmToken,
     };
+
+    switch (addNewAccount.role) {
+      case 'tenant':
+        newAccount.tenantCode = '';
+        break;
+      case 'poc':
+        if (!(await this.checkTenantCode(addNewAccount.tenantCode)))
+          throw new BadRequestException(UN_RECOGNIZED_TENANT);
+        break;
+      default:
+        throw new BadRequestException(CREATE_ACCOUNT_FAILED);
+    }
 
     await this.mailService
       .sendMail({
@@ -90,18 +92,7 @@ export class AuthService {
         throw new BadRequestException(err.message);
       });
 
-    switch (addNewAccount.role) {
-      case 'tenant':
-        if (addNewAccount.tenantCode !== '') newAccount.tenantCode = '';
-        return await this.accountRepo.save(newAccount);
-      case 'poc': {
-        if (await this.checkTenantCode(addNewAccount.tenantCode)) {
-          return await this.accountRepo.save(newAccount);
-        } else throw new NotFoundException(UN_RECOGNIZED_TENANT);
-      }
-      default:
-        throw new BadRequestException(CREATE_ACCOUNT_FAILED);
-    }
+    return await this.accountRepo.save(newAccount);
   }
 
   async confirmMail(token: string): Promise<Accounts> {
