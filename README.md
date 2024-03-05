@@ -65,6 +65,24 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Docker:
+- Đưa client và server trong cùng một folder:
+```
+your-folder/
+│
+├── checkin-system-client
+│
+├── checkin-system-server
+│
+```
+- Pull image và chạy container:
+```bash
+$ docker compose -p checkin-system up -d
+```
+- Kết nối với docker mysql
+- Chạy 'migrate.sql'
+
 ## Sản phẩm
 
 - [Hệ thống quản lý check-in](https://dangky.app)

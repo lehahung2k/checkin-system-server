@@ -19,11 +19,11 @@ import {
   POC_NOT_FOUND,
   SUCCESS_RESPONSE,
   UPDATE_INFO_SUCCESS,
-} from 'src/utils/message.utils';
-import { Role } from 'src/auth/role.decorator';
+} from '../../utils/message.utils';
 import { PointsOfCheckinDto } from '../dto/points-of-checkin.dto';
-import { RoleGuard } from 'src/auth/role.guard';
 import { UpdatePocDto } from '../dto/update-poc.dto';
+import {Role} from "../../auth/role.decorator";
+import {RoleGuard} from "../../auth/role.guard";
 
 @ApiTags('Points of Checkin')
 @Controller('api/point-of-checkin')

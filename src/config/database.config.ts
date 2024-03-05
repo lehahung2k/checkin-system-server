@@ -27,4 +27,5 @@ export const databaseConfig: TypeOrmModuleOptions = {
     Devices,
   ],
   synchronize: false,
+  migrations: [__dirname + '/migrations/*.ts'],
 };

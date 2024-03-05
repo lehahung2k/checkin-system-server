@@ -5,8 +5,8 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { Accounts } from '../../accounts/entities/accounts.entity';
-import { EventsManager } from 'src/events-manager/entities/events-manager.entity';
+import {Accounts} from "../../accounts/entities/accounts.entity";
+import {EventsManager} from "../../events-manager/entities/events-manager.entity";
 
 @Entity({ name: 'Tenants' })
 export class Tenants {

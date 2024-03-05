@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RoleGuard } from 'src/auth/role.guard';
+import { RoleGuard } from '../../auth/role.guard';
 import {
   ADD_SUCCESS,
   BAD_REQUEST_RES,
@@ -20,11 +20,11 @@ import {
   SUCCESS_RESPONSE,
   UN_RECOGNIZED_TENANT,
   UPDATE_INFO_SUCCESS,
-} from 'src/utils/message.utils';
+} from '../../utils/message.utils';
 import { EventsManagerService } from '../services/events-manager.service';
-import { Role } from 'src/auth/role.decorator';
 import { NewEventDto } from '../dto/new-event.dto';
 import { UpdateEventDto } from '../dto/update-event.dto';
+import { Role } from '../../auth/role.decorator';
 
 @ApiTags('Events Manager')
 @Controller('api/events-manager')

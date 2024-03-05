@@ -11,9 +11,13 @@ import { AuthModule } from './auth/auth.module';
 import { databaseConfig } from './config/database.config';
 import { TransactionsModule } from './transactions/transactions.module';
 import { DevicesModule } from './devices/devices.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailConfig } from './config/mail.config';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
+    MailerModule.forRootAsync(mailConfig),
     TenantsModule,
     AccountsModule,
     EventsManagerModule,

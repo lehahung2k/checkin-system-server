@@ -6,19 +6,19 @@ import {
 import { EventsManagerRepository } from '../repository/events-manager.repository';
 import { NewEventDto } from '../dto/new-event.dto';
 import { EventsManager } from '../entities/events-manager.entity';
+import { plainToInstance } from 'class-transformer';
+import { EventResponseDto } from '../dto/event-response.dto';
+import { PointsOfCheckinService } from '../../points-of-checkin/services/point-of-checkin.service';
+import { UpdateEventDto } from '../dto/update-event.dto';
 import {
   BAD_REQUEST_RES,
   DELETE_FAILED,
   EVENT_NOT_FOUND,
   POC_NOT_FOUND,
-  UN_RECOGNIZED_TENANT,
-} from 'src/utils/message.utils';
-import { plainToInstance } from 'class-transformer';
-import { Tenants } from 'src/tenants/entities/tenants.entity';
-import { AccountsRepository } from 'src/accounts/repository/accounts.repository';
-import { EventResponseDto } from '../dto/event-response.dto';
-import { PointsOfCheckinService } from '../../points-of-checkin/services/point-of-checkin.service';
-import { UpdateEventDto } from '../dto/update-event.dto';
+  UN_RECOGNIZED_TENANT
+} from "../../utils/message.utils";
+import {AccountsRepository} from "../../accounts/repository/accounts.repository";
+import {Tenants} from "../../tenants/entities/tenants.entity";
 
 @Injectable()
 export class EventsManagerService {
