@@ -1,5 +1,7 @@
 create schema if not exists checkin;
 
+use checkin;
+
 create table if not exists Accounts (
     userId bigint auto_increment primary key,
     username varchar(255) not null,
@@ -99,4 +101,5 @@ create table if not exists Transactions (
     constraint FK_81cbaf70eaf1690e869b1b120db foreign key (pointCode) references PointsOfCheckin (pointCode)
 );
 
-INSERT INTO checkin.Accounts (userId, username, password, fullName, phoneNumber, email, active, role, tenantCode, companyName, enabled, confirmMailToken) VALUES (2, 'admin', '$2b$06$Imf5zGJidnSTZD7qw2HV2e8nI1O84n0.DdU5F4T3EDfDJq/SxreuO', 'Le Ha Hung', '0123456789', 'hung@email.com', 1, 'admin', '', 'HUST', 1, null);
+INSERT INTO checkin.Accounts (userId, username, password, fullName, phoneNumber, email, active, role, tenantCode, companyName, enabled, confirmMailToken) 
+VALUES (2, 'admin', '$2b$06$Imf5zGJidnSTZD7qw2HV2e8nI1O84n0.DdU5F4T3EDfDJq/SxreuO', 'Le Ha Hung', '0123456789', 'hung@email.com', 1, 'admin', '', 'HUST', 1, null);
